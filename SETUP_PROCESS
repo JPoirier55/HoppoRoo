@@ -1,0 +1,58 @@
+
+sudo apt-get install django 
+sudo apt-get install apache2 libapache2-mod-wsgi
+**install django then apache2 and wsgi mod for apache2
+
+cd ~
+mkdir HoppoRoo
+cd HoppoRoo
+virtualenv env
+source env/bin/activate
+**creates (env) before host which is activated
+**can use $ deactivate to stop it 
+
+**within HoppoRoo directory:
+django-admin.py startproject HoppoRoo
+**creates file tree of HoppoRoo with all neccessary django pieces
+** add static root directory
+nano HoppoRoo/settings.py
+**ADD:
+STATIC_ROOT=os.path.join(BASE_DIR, "static/")
+**make initial migrations
+./manage.py makemigrations
+./manage.py migrate
+**make static one directory that we created above
+./manage.py collectstatic
+
+**if you want to check functionality with dev server 
+./manage.py runserver 1.1.1.1:8000
+**creates the server at that ip, check it in firefox/chrome
+**deactivate virtualenv
+deactivate
+
+**configure wsgi with apache
+sudo nano /etc/apache2/sites-available/000-default.configure
+**between <VirtualHost *:80> and </VirtualHost> add:
+
+<VirtualHost *:80>
+
+	.....
+
+	Alias /static /home/pi/HoppoRoo/HoppoRoo/static
+        <Directory /home/pi/HoppoRoo/HoppoRoo/static>
+                Require all granted
+        </Directory>
+
+        <Directory /home/pi/HoppoRoo/HoppoRoo/HoppoRoo>
+                <Files wsgi.py>
+                        Require all granted
+                </Files>
+        </Directory>
+
+        WSGIDaemonProcess HoppoRoo python-path=/home/pi/HoppoRoo/HoppoRoo:/home/pi/HoppoRoo/env/lib/python2.7/site-packages
+        WSGIProcessGroup HoppoRoo
+        WSGIScriptAlias / /home/pi/HoppoRoo/HoppoRoo/HoppoRoo/wsgi.py
+</VirtualHost>
+	
+
+
