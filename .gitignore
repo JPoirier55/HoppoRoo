@@ -6,10 +6,11 @@
 *.exe
 *.o
 *.so
+*.pyc
 
 # IDE stuff #
 #############
-.idea
+*.idea
 
 # Packages #
 ############
