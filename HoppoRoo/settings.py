@@ -40,6 +40,11 @@ INSTALLED_APPS = [
     'HLS'
 ]
 
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+    '/var/www/static/',
+]
+
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -118,8 +123,8 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
+SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 
 STATIC_URL = '/static/'
-print STATIC_URL
-print BASE_DIR
-STATIC_ROOT = os.path.join(BASE_DIR, "HLS/static/")
+
+STATIC_ROOT = SITE_ROOT + '/static/'
