@@ -10,7 +10,8 @@
 
 # IDE stuff #
 #############
-*.idea
+*.idea/workspace.xml
+*.idea/HoppoRoo.iml
 
 # Packages #
 ############
