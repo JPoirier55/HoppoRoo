@@ -7,10 +7,11 @@ function updateFunction(){
     function update() {
         $.ajax({
             type: "GET",
-            url: "http://192.168.42.15",
+            url: "http://192.168.42.15?callback=jsonCallBack",
             async: false,
+            jsonpCallback: 'jsonCallBack',
             contentType: "application/json",
-            dataType: 'json',
+            dataType: 'jsonp',
             success: function (json) {
                 door1 = json['door1'];
                 door2 = json['door2'];
@@ -20,6 +21,6 @@ function updateFunction(){
                 console.log('shit');
             }
         });
-
+        
     }
 }
