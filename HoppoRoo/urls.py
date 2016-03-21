@@ -20,5 +20,10 @@ from HLS import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^', views.index)
+    url(r'^home$', views.index),
+    url(r'^test$', views.test),
+    url(r'^quizview$', views.quiz_view),
+    url(r'^loadquiz$', views.load_quiz),
+    url(r'^api/v1/quizdata', views.quiz_data),
+
 ]

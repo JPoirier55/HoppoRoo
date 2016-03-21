@@ -1,0 +1,39 @@
+{% extends "index.html" %}
+{% load index %}
+{% block content %}
+
+        <div class="dropdown">
+              <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Choose a quiz
+              <span class="caret"></span></button>
+              <ul class="dropdown-menu">
+                {% for quiz_id in quiz_count %}
+                    <li><a href="/loadquiz?id={{ quiz_id }}">Quiz Name: {{ quiz_names|index:quiz_id }}</a></li>
+                {% endfor %}
+              </ul>
+        </div>
+       QUIZ ID: {{ chosen_quiz.id }}<br>
+    QUIZ NAME: {{ chosen_quiz.name }}<br>
+        DATE CREATED: {{ chosen_quiz.date_created }}
+        <table style="border: solid 1px black; margin: 10px; ">
+        <tr>
+        <td>Question:</td>
+        {% for question in chosen_quiz.questions %}
+           <td style=" border: solid 1px black;padding: 10px;">{{ question }}</td>
+        {% endfor %}
+        </tr>
+
+        <tr>
+        <td>Answers:</td>
+        {% for answer in chosen_quiz.answers %}
+            <td style=" border: solid 1px black;padding: 10px;">
+                Correct Answer: {{ answer.correct }}<br>
+                Choices:<br>
+                {% for choice in answer.choices %}
+                  <strong>{{ forloop.counter }}</strong> :   {{ choice }}<br>
+                {% endfor %}
+            </td>
+        {% endfor %}
+        </tr>
+        </table>
+
+{% endblock %}

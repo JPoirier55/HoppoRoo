@@ -25,6 +25,10 @@ function update(ip) {
     });
 }
 
+function toggle(){
+    console.log(clearInterval(interval));
+    console.log(interval);
+}
 
 
 
