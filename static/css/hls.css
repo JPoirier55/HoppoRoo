@@ -1,4 +1,118 @@
-body {
-    background-color: #eeeedd;
-    /*background-image: url("../res/background1.jpg");*/
+/*---------globals style----------- */
+@font-face {
+    font-family: open-sans;
+    src: url('../fonts/OpenSans-Regular.ttf');
 }
+body {
+    background-color: #D0D0D0;
+    font-family: open-sans;
+}
+.navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
+    background-color: #424445;
+    color: #D0D0D0;
+}
+
+
+
+/*------------stle for load quiz-------------*/
+#loadquiz{
+    min-width: 0;
+    max-width: 100%;
+    background: #F8F8F8;
+    margin: 20px;
+    padding: 20px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    text-align: center;
+}
+#quizHeading{
+    border: 2px solid #424445;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    background: #424445;
+    margin: 20px;
+    padding: 20px;
+    color: #D0D0D0;
+}
+
+#quizTable {
+    border-collapse: collapse;
+    width: 75%;
+    margin-left: 12.5%;
+}
+
+#quizTable td, #quizTable th {
+    border: 1px solid #ddd;
+    text-align: left;
+    padding: 8px;
+}
+
+#quizTable tr:nth-child(even){background-color: #f2f2f2}
+
+#quizTable tr:hover {background-color: #ddd;}
+
+#quizTable th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    color: white;
+}
+
+
+
+/*---------style for create quiz------------*/
+#quizDiv{
+    min-width: 0;
+    max-width: 60%;
+    background: #F8F8F8;
+    margin: 20px;
+    padding: 20px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    color: #D0D0D0;
+    text-align: center;
+}
+#quizDrop{
+    margin: 20px;
+    padding: 20px;
+}
+
+input[type=text], select {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+label{
+    color: #D0D0D0;
+}
+#quizSingle{
+    border: 2px solid #424445;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    background: #424445;
+    margin-right: 40px;
+    margin-bottom: 20px;
+    padding: 20px;
+    color: black;
+}
+.nameinput{
+    width: 50%;
+    margin-left: 25%;
+}
+.quiznums {
+  left: 50%;
+  right: auto;
+  text-align: center;
+  transform: translate(-50%, 0);
+}
+
+
+
+

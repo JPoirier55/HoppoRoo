@@ -1,0 +1,60 @@
+{% extends "index.html" %}
+{% block content %}
+    {% csrf_token %}
+
+    <div id="quizDiv">
+        <div id="quizDrop" class="dropdown">
+              <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Choose Number of Questions
+              <span class="caret"></span></button>
+              <ul class="dropdown-menu quiznums">
+                  <li><a>1</a></li>
+                  <li><a>2</a></li>
+                  <li><a>3</a></li>
+                  <li><a>4</a></li>
+                  <li><a>5</a></li>
+                  <li><a>6</a></li>
+              </ul>
+        </div>
+
+
+        <form action='/create_quiz_ap' method='post'>{% csrf_token %}
+             <div id="quizSingle" class="nameinput"> <label for='id_name'>Quiz Name: </label><input id='id_name'  name='name' type='text' /></div>
+                <ul class="quizEntries"></ul>
+            <button class="submitbut btn btn-primary">Submit</button>
+        </form>
+    </div>
+
+
+    <script type="text/javascript">
+
+        $('.quiznums li a').click(function(e){
+            $('.quizEntries').empty();
+
+            var quizloop = e.delegateTarget.innerHTML;
+            for (i=0; i < quizloop; i++){
+                 $('.quizEntries').append("\
+                 \
+                 <div id='quizSingle'>\
+                <label for='id_question'>Question:</label><input id='id_question' name='question' type='text' /> \
+                <label for='id_correct'>Correct Answer:</label><input id='id_correct' name='correct' type='text' /> \
+                <label for='id_choice_1'>Choice 1:</label><input id='id_choice_1' name='choice_1' type='text' /> \
+                <label for='id_choice_2'>Choice 2:</label><input id='id_choice_2' name='choice_2' type='text' /> \
+                <label for='id_choice_3'>Choice 3:</label><input id='id_choice_3' name='choice_3' type='text' /> \
+                <label for='id_choice_4'>Choice 4:</label><input id='id_choice_4' name='choice_4' type='text' />\
+                \
+                </div>");
+            }
+        });
+
+        $('.submitbut').click(function(e){
+            if(confirm('Are you sure you want to submit this quiz?')){
+                $('.submitbut').submit();
+            }else{
+                e.stopImmediatePropagation();
+                e.preventDefault();
+            }
+        })
+
+    </script>
+
+{% endblock %}
