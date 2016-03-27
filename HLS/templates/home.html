@@ -1,0 +1,54 @@
+{% extends "index.html" %}
+{% block content %}
+
+     <script type="text/javascript">
+        function startTime() {
+            var today = new Date();
+            var d = today.getDay();
+            var day = today.getDate();
+            var mo = today.getMonth();
+            var h = today.getHours();
+            if(h > 12){
+                h -= 12;
+            }
+            var m = today.getMinutes();
+            var s = today.getSeconds();
+            m = checkTime(m);
+            s = checkTime(s);
+            dayarr = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            montharr = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            document.getElementById('timediv').innerHTML = h + ":" + m + ":" + s;
+            document.getElementById('datediv').innerHTML = dayarr[d] + ", " + montharr[mo] + " " + day;
+            var t = setTimeout(startTime, 500);
+        }
+        function checkTime(i) {
+            if (i < 10) {i = "0" + i}
+            return i;
+        }
+    </script>
+
+    <div class="col-md-6">
+        <div class="col-md-12 homediv">
+            <div id="timediv"></div>
+            <div id="datediv"></div>
+            <script type="text/javascript">
+                    startTime();
+            </script>
+        </div>
+    </div>
+        <div class="col-md-6">
+        <div class="homediv" id="recentdiv">
+            <span style="font-size: 1.5vw;" >Most recent quiz: </span>
+            <p style="width: 50%; margin-left: auto; margin-right: auto;">
+                 {{ quiz_name }}
+            </p>
+
+            <span style="font-size: 1.5vw;" >Created on: </span>
+            <p>
+                {{ recent_quiz.date_created }}
+            </p>
+            <a style="font-size: 1.5vw;" href="/loadquiz?id={{ recent_quiz.id }}">Load most recent quiz</a>
+        </div>
+    </div>
+
+{% endblock %}

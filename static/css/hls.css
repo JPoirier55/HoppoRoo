@@ -12,9 +12,33 @@ body {
     color: #D0D0D0;
 }
 
+/*-----------style for home ------------------*/
+.homediv, .homediv2{
+    min-width: 0;
+    max-width: 100%;
+    background: #F8F8F8;
+    margin: 20px;
+    padding: 20px;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    text-align: center;
+}
+.homediv{
+    height: 250px;
 
+}
+#timediv{
+    font-size: 5vw;
+}
+#datediv{
+    font-size: 2vw;
+}
+#recentdiv{
+    font-size: 100%;
+}
 
-/*------------stle for load quiz-------------*/
+/*------------style for load quiz-------------*/
 #loadquiz{
     min-width: 0;
     max-width: 100%;
@@ -64,7 +88,7 @@ body {
 /*---------style for create quiz------------*/
 #quizDiv{
     min-width: 0;
-    max-width: 60%;
+    max-width: 100%;
     background: #F8F8F8;
     margin: 20px;
     padding: 20px;
@@ -77,6 +101,9 @@ body {
 #quizDrop{
     margin: 20px;
     padding: 20px;
+}
+#quizDropLabel{
+    color: #000;
 }
 
 input[type=text], select {
@@ -107,10 +134,10 @@ label{
     margin-left: 25%;
 }
 .quiznums {
-  left: 50%;
-  right: auto;
-  text-align: center;
-  transform: translate(-50%, 0);
+    left: 50%;
+    right: auto;
+    text-align: center;
+    transform: translate(-50%, 0);
 }
 
 

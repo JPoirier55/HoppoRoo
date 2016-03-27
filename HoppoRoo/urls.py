@@ -18,9 +18,11 @@ from django.conf.urls import url
 from django.contrib import admin
 from HLS import views
 
+admin.autodiscover()
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^home$', views.index),
+    url(r'^home$', views.home),
     url(r'^quizview$', views.quiz_view),
     url(r'^loadquiz$', views.load_quiz),
     url(r'^createquiz$', views.create_quiz),

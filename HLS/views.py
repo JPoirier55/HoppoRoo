@@ -3,30 +3,30 @@ from django.shortcuts import HttpResponseRedirect
 import utils
 import json
 import datetime
+from models import Quiz
 
 
-def index(request):
-
-    return render(request, 'index.html')
+def home(request):
+    quiz_obj = utils.Quizzes(request.META['HTTP_HOST'])
+    chosen_quiz = quiz_obj.get_most_recent_quiz()
+    return render(request, 'home.html', {'recent_quiz': chosen_quiz,
+                                         'quiz_name': chosen_quiz['name']})
 
 
 def quiz_view(request):
-
     return render(request, 'quiz_view.html')
 
 
 def load_quiz(request):
-
     if 'id' in request.GET:
         id = request.GET['id']
     else:
         id = 0
-    host = request.META['HTTP_HOST']
-    chosen_quiz, quiz_count, quiz_names = utils.collect_quiz(id, host)
+    quiz_obj = utils.Quizzes(request.META['HTTP_HOST'])
 
-    return render(request, 'load_quiz.html', {'chosen_quiz': chosen_quiz,
-                                              'quiz_count': range(quiz_count),
-                                              'quiz_names': quiz_names})
+    return render(request, 'load_quiz.html', {'chosen_quiz': quiz_obj.json_obj[int(id)],
+                                              'quiz_count': range(len(quiz_obj.json_obj)),
+                                              'quiz_names': quiz_obj.get_quiz_names()})
 
 
 def quiz_data(request):
@@ -55,6 +55,10 @@ def create_quiz_ap(request):
 
     quizjson.append(newjson)
 
+    quiz_model = Quiz()
+    quiz_model.quizjson = json.dumps(newjson)
+    quiz_model.save()
+
     with open("HLS/templates/quizdata.json", "w") as f:
         json.dump(quizjson, f)
 
@@ -63,16 +67,3 @@ def create_quiz_ap(request):
 
 def create_quiz(request):
     return render(request, 'create_quiz.html')
-
-
-
-
-
-
-
-
-# Test page that shows inheritance
-def test(request):
-    print 'loading test panel'
-    return render(request, 'testpanel.html')
-

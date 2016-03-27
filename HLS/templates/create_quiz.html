@@ -1,29 +1,30 @@
 {% extends "index.html" %}
 {% block content %}
     {% csrf_token %}
+    <div class="col-md-12">
+        <div id="quizDiv">
+            <div id="quizDrop" class="dropdown">
+                <label id="quizDropLabel" for="quizDrop">Choose number of questions</label>
+                  <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+                  <span class="caret"></span></button>
+                  <ul class="dropdown-menu quiznums">
+                      <li><a>1</a></li>
+                      <li><a>2</a></li>
+                      <li><a>3</a></li>
+                      <li><a>4</a></li>
+                      <li><a>5</a></li>
+                      <li><a>6</a></li>
+                  </ul>
+            </div>
 
-    <div id="quizDiv">
-        <div id="quizDrop" class="dropdown">
-              <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Choose Number of Questions
-              <span class="caret"></span></button>
-              <ul class="dropdown-menu quiznums">
-                  <li><a>1</a></li>
-                  <li><a>2</a></li>
-                  <li><a>3</a></li>
-                  <li><a>4</a></li>
-                  <li><a>5</a></li>
-                  <li><a>6</a></li>
-              </ul>
+
+            <form action='/create_quiz_ap' method='post'>{% csrf_token %}
+                 <div id="quizSingle" class="nameinput"> <label for='id_name'>Quiz Name: </label><input id='id_name'  name='name' type='text' /></div>
+                    <ul class="quizEntries"></ul>
+                <button class="submitbut btn btn-primary">Submit</button>
+            </form>
         </div>
-
-
-        <form action='/create_quiz_ap' method='post'>{% csrf_token %}
-             <div id="quizSingle" class="nameinput"> <label for='id_name'>Quiz Name: </label><input id='id_name'  name='name' type='text' /></div>
-                <ul class="quizEntries"></ul>
-            <button class="submitbut btn btn-primary">Submit</button>
-        </form>
     </div>
-
 
     <script type="text/javascript">
 
