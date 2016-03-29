@@ -6,7 +6,7 @@ var interval = setInterval(queue, 1000);
 console.log(interval);
 
 function queue(){
-    update("192.168.42.15");
+    update("192.168.42.16");
 }
 function update(ip) {
     $.ajax({

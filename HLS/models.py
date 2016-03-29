@@ -13,3 +13,14 @@ class Quiz(models.Model):
 # class Answer(models.Model):
 #     correct = models.CharField()
 #
+
+class Device(models.Model):
+    id = models.IntegerField(primary_key=True)
+    student = models.IntegerField(choices=[(0, 0), (1, 1), (2, 2), (3, 3)])
+
+class Student(models.Model):
+    name = models.CharField(max_length=256)
+    id = models.IntegerField(primary_key=True)
+
+# class Grades(models.Model):
+#     studentId = models.ForeignKey(Student.id)
