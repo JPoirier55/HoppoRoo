@@ -1,10 +1,11 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     {% load static  %}
     <meta charset="UTF-8">
     <title>Title</title>
-    <script src="{% static "js/jquery.min.js" %}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
 
@@ -13,8 +14,7 @@
 <body>
     This can be the page that can be seen by students with a chart
 
-    <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
-
+    <div class="answerChart" style="min-width: 310px; height: 700px; margin: 0 auto"></div>
     click <a href="/home">here</a> to return back to dashboard
 
     <script>
@@ -26,7 +26,7 @@
                     }
                 });
 
-                $('#container').highcharts({
+                $('.answerChart').highcharts({
                     chart: {
                         type: 'column',
                         animation: Highcharts.svg, // don't animate in old IE
@@ -36,24 +36,43 @@
 
                                 // set up the updating of the chart each second
                                 var series = this.series[0];
-                                var response_json;
                                 setInterval(function () {
-                                    $.when(
-                                    $.ajax({
-                                       type: "GET",
-                                       url: "api/v1/data",
-                                       success: function (response) {
-                                         console.log(JSON.parse(response));
-                                         response_json = JSON.parse(response);
-                                         }
-                                     }).then(function() {
-                                        var x = (new Date()).getTime(), // current time
-                                                y = Math.random();
-                                        series.setData([response_json['A'], response_json['B'], response_json['C'], response_json['D']], true, false, true);
-                                    }))
+                                    var jText = '{ "A":' + (Math.floor(Math.random() * (20 - 0 + 1)) + 0) + ',' +
+                                            '"B":' + (Math.floor(Math.random() * (20 - 0 + 1)) + 0) + ',' +
+                                            '"C":' + (Math.floor(Math.random() * (20 - 0 + 1)) + 0) + ',' +
+                                            '"D":' + (Math.floor(Math.random() * (20 - 0 + 1)) + 0) +'}';
 
+                                    var jObj = JSON.parse(jText);
+                                    console.log(jObj);
+                                    var A_Answers = 0;
+                                    var B_Answers = 0;
+                                    var C_Answers = 0;
+                                    var D_Answers = 0;
+                                    $.each( jObj, function( key, val ) {
+                                        if(key=="A")A_Answers=parseInt(val);
+                                        if(key=="B")B_Answers=parseInt(val);
+                                        if(key=="C")C_Answers=parseInt(val);
+                                        if(key=="D")D_Answers=parseInt(val);
+                                    });
 
-                                }, 200);
+                                    series.setData([A_Answers, B_Answers,C_Answers,D_Answers],true,false,true);
+//                                    $.getJSON( "answers.json", function( data ) {
+//
+//                                        var A_Answers = 0;
+//                                        var B_Answers = 0;
+//                                        var C_Answers = 0;
+//                                        var D_Answers = 0;
+//                                        $.each( data, function( key, val ) {
+//                                            if(key=="A")A_Answers=parseInt(val);
+//                                            if(key=="B")B_Answers=parseInt(val);
+//                                            if(key=="C")C_Answers=parseInt(val);
+//                                            if(key=="D")D_Answers=parseInt(val);
+//                                        });
+//
+//                                        series.setData([A_Answers, B_Answers,C_Answers,D_Answers],true,false,true);
+//                                        console.log("GOODBYE!!!");
+//                                    });
+                                }, 1000);
                             }
                         }
                     },
@@ -105,5 +124,3 @@
             });
         });
     </script>
-</body>
-</html>
