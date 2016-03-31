@@ -29,5 +29,6 @@ urlpatterns = [
     url(r'^api/v1/quizdata', views.quiz_data),
     url(r'^create_quiz$', views.create_quiz),
     url(r'^create_quiz_ap$', views.create_quiz_ap),
+    url(r'^api/v1/data$', views.data_access_point),
 
 ]

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static  %}
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="{% static "js/jquery.min.js" %}"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+
+
+</head>
+<body>
+    This can be the page that can be seen by students with a chart
+
+    <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+
+    click <a href="/home">here</a> to return back to dashboard
+
+    <script>
+        $(function () {
+            $(document).ready(function () {
+                Highcharts.setOptions({
+                    global: {
+                        useUTC: false
+                    }
+                });
+
+                $('#container').highcharts({
+                    chart: {
+                        type: 'column',
+                        animation: Highcharts.svg, // don't animate in old IE
+                        marginRight: 100,
+                        events: {
+                            load: function () {
+
+                                // set up the updating of the chart each second
+                                var series = this.series[0];
+                                var response_json;
+                                setInterval(function () {
+                                    $.when(
+                                    $.ajax({
+                                       type: "GET",
+                                       url: "api/v1/data",
+                                       success: function (response) {
+                                         console.log(JSON.parse(response));
+                                         response_json = JSON.parse(response);
+                                         }
+                                     }).then(function() {
+                                        var x = (new Date()).getTime(), // current time
+                                                y = Math.random();
+                                        series.setData([response_json['A'], response_json['B'], response_json['C'], response_json['D']], true, false, true);
+                                    }))
+
+
+                                }, 200);
+                            }
+                        }
+                    },
+                    title: {
+                        text: 'Answers to Question'
+                    },
+                    xAxis: {
+                        labels: {
+                            style: {
+                                color: 'red',
+                                fontSize:'50px'
+                            }
+                        },
+                        categories: [
+                            'A',
+                            'B',
+                            'C',
+                            'D',
+                        ],
+                    },
+                    yAxis: {
+                        title: {
+                            style: {
+                                color: 'green',
+                                fontSize:'20px'
+                            },
+                            text: 'Hoppys with Answer'
+                        },
+                        allowDecimals: false,
+                        plotLines: [{
+                            value: 0,
+                            width: 1,
+                            color: '#808080'
+                        }]
+                    },
+
+                    legend: {
+                        enabled: false
+                    },
+                    exporting: {
+                        enabled: false
+                    },
+                    series: [{
+                        name: 'Choices',
+                        data: []
+
+                    }]
+                });
+            });
+        });
+    </script>
+</body>
+</html>

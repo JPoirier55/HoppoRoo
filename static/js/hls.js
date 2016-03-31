@@ -2,7 +2,7 @@
  * Created by Jake on 2/27/2016.
  */
 
-var interval = setInterval(queue, 1000);
+/* var interval = setInterval(queue, 1000);
 console.log(interval);
 
 function queue(){
@@ -28,7 +28,19 @@ function update(ip) {
 function toggle(){
     console.log(clearInterval(interval));
     console.log(interval);
-}
+}*/
+
+//function queue(){
+//
+//	$.ajax({
+//	   type: "GET",
+//	   url: "pytest/test",
+//	   success: function (response) {
+//	      console.log(JSON.parse(response));
+//	   }
+//	});
+//
+//}
 
 
 

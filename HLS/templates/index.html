@@ -8,7 +8,7 @@
     <link rel="stylesheet" type="text/css" href="{% static "css/hls.css" %}">
     <script src="{% static "js/jquery.min.js" %}"></script>
     <script src="{% static "js/bootstrap.min.js" %}"></script>
-    <script src="{% static "js/hls.js" %}"></script>
+   <!-- <script src="{% static "js/hls.js" %}"></script>-->
 
 </head>
 <body>
@@ -32,6 +32,8 @@
                 <div class="container-fluid">
                     {% block content %}
                     {% endblock %}
+
+		{{ data }}
                 </div>
             </div>
         </div>

@@ -1,17 +1,42 @@
 from django.shortcuts import render
 from django.shortcuts import HttpResponseRedirect
+from django.shortcuts import HttpResponse
 import utils
 import json
 import datetime
 from models import Quiz
 import sys
+import requests
 
 
 def home(request):
+    """
+    Home page with access to most recent quiz and the ability to login
+    :param request: request from current page
+    :return: rendered template with data
+    """
     quiz_obj = utils.Quizzes(request.META['HTTP_HOST'])
     chosen_quiz = quiz_obj.get_most_recent_quiz()
     return render(request, 'home.html', {'recent_quiz': chosen_quiz,
                                          'quiz_name': chosen_quiz['name']})
+
+
+def data_access_point(request):
+    """
+    Point that holds and updates all mat data and consolidates it
+    into one json object that is then served
+    :param request: request from current page
+    :return: response object with json data
+    """
+    response_data = json.loads(requests.get("http://192.168.42.16:8080").text)
+    response_data2 = json.loads(requests.get("http://192.168.42.15:8080").text)
+    
+    output_json = {'A': int(response_data['buttonA'])+int(response_data2['buttonB']),
+                   'B': int(response_data['buttonB'])+int(response_data2['buttonB']),
+                   'C': int(response_data['buttonC'])+int(response_data2['buttonC']),
+                   'D': int(response_data['buttonD'])+int(response_data2['buttonD'])}
+
+    return HttpResponse(json.dumps(output_json))
 
 
 def quiz_view(request):
@@ -19,6 +44,11 @@ def quiz_view(request):
 
 
 def load_quiz(request):
+    """
+    Page to load and view quizzes
+    :param request: request from current page
+    :return: redered template for load quiz page
+    """
     if 'id' in request.GET:
         id = request.GET['id']
     else:
@@ -35,6 +65,11 @@ def quiz_data(request):
 
 
 def create_quiz_ap(request):
+    """
+    Quiz data access point for storing and retrieving quiz data
+    :param request: request from current page
+    :return: redirect back to page while
+    """
     dict = json.dumps(request.POST)
     json_dict = json.loads(dict)
 
@@ -71,4 +106,9 @@ def create_quiz_ap(request):
 
 
 def create_quiz(request):
+    """
+    Page that allows user to create quiz and save it
+    :param request: request from current page
+    :return: rendered template for create quiz page
+    """
     return render(request, 'create_quiz.html')
