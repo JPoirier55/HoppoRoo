@@ -2,22 +2,27 @@
 {% load index %}
 {% block content %}
 
+     <div class="page-header">
+        <h1 style="font-size: 7vw;">Recent Quizzes</h1>
+    </div>
+
     <div id="loadquiz">
-        <div class="dropdown">
-              <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Choose a quiz
-              <span class="caret"></span></button>
-              <ul class="dropdown-menu quiznums">
-                {% for quiz_id in quiz_count %}
-                    <li><a href="/loadquiz?id={{ quiz_id }}">Quiz Name: {{ quiz_names|index:quiz_id }}</a></li>
-                {% endfor %}
-              </ul>
-        </div>
-        <div id="quizHeading">
+            <div id="quizHeading">
+                <div class="dropdown">
+                  <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Choose a quiz
+                  <span class="caret"></span></button>
+                  <ul class="dropdown-menu quiznums">
+                    {% for quiz_id in quiz_count %}
+                        <li><a href="/quizzes/load_quiz?id={{ quiz_id }}">Quiz Name: {{ quiz_names|index:quiz_id }}</a></li>
+                    {% endfor %}
+                  </ul>
+            </div>
                 QUIZ ID: {{ chosen_quiz.id }}<br>
-            QUIZ NAME: {{ chosen_quiz.name }}<br>
-            DATE CREATED: {{ chosen_quiz.date_created }}
-        </div>
-        <div class="table-responsive">
+                QUIZ NAME: {{ chosen_quiz.name }}<br>
+                DATE CREATED: {{ chosen_quiz.date_created }}
+            </div>
+
+        <div class="table-responsive" style="margin-bottom: 100px;">
             <table id="quizTable">
                 <tr>
                 <td>Question:</td>

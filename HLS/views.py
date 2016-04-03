@@ -21,22 +21,12 @@ def home(request):
                                          'quiz_name': chosen_quiz['name']})
 
 
-def data_access_point(request):
-    """
-    Point that holds and updates all mat data and consolidates it
-    into one json object that is then served
-    :param request: request from current page
-    :return: response object with json data
-    """
-    response_data = json.loads(requests.get("http://192.168.42.16:8080").text)
-    response_data2 = json.loads(requests.get("http://192.168.42.15:8080").text)
-    
-    output_json = {'A': int(response_data['buttonA'])+int(response_data2['buttonB']),
-                   'B': int(response_data['buttonB'])+int(response_data2['buttonB']),
-                   'C': int(response_data['buttonC'])+int(response_data2['buttonC']),
-                   'D': int(response_data['buttonD'])+int(response_data2['buttonD'])}
+def quizzes_home(request):
+    return render(request, 'quizzes_home.html')
 
-    return HttpResponse(json.dumps(output_json))
+
+def quizzes(request):
+    return render(request, 'quiz_view_1.html')
 
 
 def quiz_view(request):
@@ -60,8 +50,76 @@ def load_quiz(request):
                                               'quiz_names': quiz_obj.get_quiz_names()})
 
 
-def quiz_data(request):
-    return render(request, 'quizdata.json')
+def create_quiz(request):
+    """
+    Page that allows user to create quiz and save it
+    :param request: request from current page
+    :return: rendered template for create quiz page
+    """
+    return render(request, 'create_quiz.html')
+
+
+def help(request):
+    return render(request, 'help.html')
+
+def results(request):
+    results = {'quiz1': {'class_av': '25',
+                         'class_median': '34',
+                         'std_dev': '3',
+                         'high': '56',
+                         'low': '1',
+                         'num_of_questions': '5',
+                         'subject': 'math',
+                         'name': 'some quiz i made'},
+               'quiz2': {'class_av': '25',
+                         'class_median': '3d4',
+                         'std_dev': 'f3',
+                         'high': '356',
+                         'low': '14',
+                         'num_of_questions': '54',
+                         'subject': 'science',
+                         'name': 'some other quiz'},
+               }
+
+    return render(request, 'results.html', {'results_list': results})
+
+def students(request):
+    names = {'Jake': {'quizzes': ['98', '43', '34', '100'],
+                      'quiznames': ['quiz1', 'quiz2', 'quiz3', 'quiz4']},
+             'kayla': {'quizzes': ['98', '5', '34', '80'],
+                       'quiznames': ['quiz1', 'quiz2', 'quiz3', 'quiz4']},
+             'bubba': {'quizzes': ['88', '45', '8', '88'],
+                       'quiznames': ['quiz1', 'quiz2', 'quiz3', 'quiz4']},
+             'lela': {'quizzes': ['98', '44', '44', '44'],
+                      'quiznames': ['quiz1', 'quiz2', 'quiz3', 'quiz4']}}
+    if 'name' not in request.GET:
+        student_name = names.keys()[0]
+    else:
+        student_name = request.GET['name']
+
+    return render(request, 'students.html', {'student_list': names,
+                                             'chosen_student': student_name,
+                                             'chosen_student_dict': names[student_name],
+                                             'numquizzes': range(len(names[student_name]['quizzes']))})
+
+
+# ---------------------- API SECTION ----------------- #
+def data_access_point(request):
+    """
+    Point that holds and updates all mat data and consolidates it
+    into one json object that is then served
+    :param request: request from current page
+    :return: response object with json data
+    """
+    response_data = json.loads(requests.get("http://192.168.42.16:8080").text)
+    response_data2 = json.loads(requests.get("http://192.168.42.15:8080").text)
+
+    output_json = {'A': int(response_data['buttonA'])+int(response_data2['buttonB']),
+                   'B': int(response_data['buttonB'])+int(response_data2['buttonB']),
+                   'C': int(response_data['buttonC'])+int(response_data2['buttonC']),
+                   'D': int(response_data['buttonD'])+int(response_data2['buttonD'])}
+
+    return HttpResponse(json.dumps(output_json))
 
 
 def create_quiz_ap(request):
@@ -105,10 +163,5 @@ def create_quiz_ap(request):
     return HttpResponseRedirect('/create_quiz')
 
 
-def create_quiz(request):
-    """
-    Page that allows user to create quiz and save it
-    :param request: request from current page
-    :return: rendered template for create quiz page
-    """
-    return render(request, 'create_quiz.html')
+def quiz_data(request):
+    return render(request, 'quizdata.json')

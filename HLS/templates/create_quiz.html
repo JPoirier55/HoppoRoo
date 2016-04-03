@@ -1,6 +1,11 @@
 {% extends "index.html" %}
 {% block content %}
-    {% csrf_token %}
+{% csrf_token %}
+
+     <div class="page-header">
+        <h1 style="font-size: 7vw;">Create a Quiz</h1>
+    </div>
+
     <div class="col-md-12">
         <div id="quizDiv">
             <div id="quizDrop" class="dropdown">
@@ -18,9 +23,11 @@
             </div>
 
 
-            <form action='/create_quiz_ap' method='post'>{% csrf_token %}
-                 <div id="quizSingle" class="nameinput"> <label for='id_name'>Quiz Name: </label><input id='id_name'  name='name' type='text' /></div>
-                    <ul class="quizEntries"></ul>
+            <form action='/api/v1/create_quiz_ap' method='post'>{% csrf_token %}
+                 <div id="nameinputid" class="nameinput"> <label for='id_name'>Quiz Name (Up to 32 chars) : </label>
+                     <input id='id_name'  name='name' type='text' maxlength="32"/>
+                 </div>
+                <ul class="quizEntries"></ul>
                 <button class="submitbut btn btn-primary">Submit</button>
             </form>
         </div>

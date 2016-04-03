@@ -1,4 +1,14 @@
 <!DOCTYPE html>
+<!---------------------------------------------------
+    Copyright 2016 Colorado State University
+    License: Idunno
+    Jake Poirier
+    Jake Lord
+
+    This site is powered by Python Django!
+
+-->
+
 <html lang="en">
 <head>
     {% load static  %}
@@ -6,39 +16,33 @@
     <title>HoppoRoo!</title>
     <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap.min.css" %}">
     <link rel="stylesheet" type="text/css" href="{% static "css/hls.css" %}">
+    <link rel="stylesheet" type="text/css" href="{% static "css/font-awesome.min.css" %}">
     <script src="{% static "js/jquery.min.js" %}"></script>
     <script src="{% static "js/bootstrap.min.js" %}"></script>
-   <!-- <script src="{% static "js/hls.js" %}"></script>-->
 
 </head>
 <body>
     <div class="wrapper">
-    <nav class="navbar navbar-default">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <a class="navbar-brand" href="/home">HoppoRoo! Dashboard</a>
-        </div>
-        <ul class="nav navbar-nav">
-          <li><a href="/home">Home</a></li>
-          <li><a href="/create_quiz">Create Quiz</a></li>
-          <li><a href="/loadquiz">Load Quiz</a></li>
-          <li><a href="#">View Results</a></li>
-            <li><a href="/quizview">Quiz View</a></li>
-        </ul>
-      </div>
-    </nav>
         <div class="main-panel">
             <div class="content">
                 <div class="container-fluid">
                     {% block content %}
                     {% endblock %}
-
-		{{ data }}
                 </div>
             </div>
         </div>
     </div>
 
+    <div class="navbar-fixed-bottom navbar-text">
+        <ul class="nav navbar-left linkssmall">
+            <li id="red"><a href="/home">Home</a></li>
+        </ul>
+        <ul class="navbar-left">
+            <a href="#"><i class="fa fa-facebook-square fa-3x"></i></a>
+            <a href="#"><i class="fa fa-twitter fa-3x"></i></a>
+            <a href="#"><i class="fa fa-google-plus fa-3x"></i></a>
+        </ul>
 
+    </div>
 </body>
 </html>

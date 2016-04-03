@@ -1,0 +1,35 @@
+{% extends "index.html" %}
+{% load index %}
+
+{% block content %}
+
+     <div class="page-header">
+        <h1 style="font-size: 7vw;">Students</h1>
+    </div>
+
+    <div class="studentpicker" >
+       <select id="studentpickerbox" onchange="location = this.value;">
+           {% for student in student_list %}
+          <option value="/students?name={{ student }}" {% if chosen_student == student %}selected{% endif %}>{{ student }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="col-md-12">
+        <div class="table-responsive" style="margin-bottom: 100px;">
+            <table id="resultstable">
+                <tr>
+                <th>Quiz</th>
+                <th>Grade</th>
+                </tr>
+
+                {% for index in numquizzes %}
+                    <tr>
+                        <td>{{ chosen_student_dict.quiznames|index:index }}</td>
+                        <td>{{ chosen_student_dict.quizzes|index:index }}</td>
+                    </tr>
+                {% endfor %}
+
+            </table>
+        </div>
+    </div>
+{% endblock %}

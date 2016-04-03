@@ -1,0 +1,37 @@
+{% extends "index.html" %}
+{% block content %}
+
+     <div class="page-header">
+        <h1 style="font-size: 7vw;">Quizzes</h1>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+            <ul class="nav nav-sidebar">
+              <li><a href="/quizzes/create_quiz">Create a Quiz</a></li>
+              <li><a href="/quizzes/load_quiz">Recent Quizzes</a></li>
+              <li><a href="/quizzes/load_quiz">Archived Quizzes</a> </li>
+            </ul>
+        </div>
+        <div class="col-md-8 quizlinks">
+           <ul class="nav">
+              <li id="red"><a href="/quizzes/create_quiz?subject=math">Math </a></li>
+              <li id="yellow"><a href="/quizzes/create_quiz?subject=science">Science</a></li>
+              <li id="green"><a href="/quizzes/create_quiz?subject=reading">Reading</a> </li>
+              <li id="red"><a href="/quizzes/create_quiz?subject=writing">Writing</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="quizinfo">
+            <p>
+                Please select a subject to begin creating a quiz, or use the
+                custom creator by clicking Create a Quiz. You may also review
+                recent quizzes or archived quizzes.
+            </p>
+        </div>
+    </div>
+
+
+
+{% endblock %}

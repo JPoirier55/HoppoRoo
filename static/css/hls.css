@@ -1,70 +1,188 @@
 /*---------globals style----------- */
 @font-face {
-    font-family: open-sans;
-    src: url('../fonts/OpenSans-Regular.ttf');
+    font-family: teacher;
+    src: url('../fonts/KGWhattheTeacherWants.ttf');
 }
 body {
-    background-color: #D0D0D0;
-    font-family: open-sans;
+    background-color: #F7F7CD;
+    font-family: teacher;
 }
-.navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
-    background-color: #424445;
-    color: #D0D0D0;
+.fa-facebook-square{
+    color: #2E3B7F;
 }
+.fa-facebook-square:hover, .fa-twitter:hover, .fa-google-plus:hover{
+    color: #000;
+}
+.fa-google-plus{
+    color: #932933;
+}
+.fa-twitter{
+    color: #437341;
+}
+.linkssmall {
+    text-align: center;
+    font-size: 1vw;
+}
+.linkssmall li{
+    display: inline-block;
+}
+.linkssmall a{
+    color: white;
+}
+
+
+/* ---------- navbar if needed-----------*/
+/*.navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {*/
+    /*background-color: #424445;*/
+    /*color: #D0D0D0;*/
+/*}*/
 
 /*-----------style for home ------------------*/
-.homediv, .homediv2{
-    min-width: 0;
-    max-width: 100%;
-    background: #F8F8F8;
-    margin: 20px;
-    padding: 20px;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
+.page-header{
     text-align: center;
 }
-.homediv{
-    height: 250px;
-
+#logo{
+    width: 50%;
+    background-color: transparent;
 }
-#timediv{
-    font-size: 5vw;
-}
-#datediv{
+.links {
+    text-align: center;
     font-size: 2vw;
 }
-#recentdiv{
-    font-size: 100%;
+.links li{
+    display: inline-block;
+}
+.links a{
+    color: white;
+}
+
+#red{
+    background-color: #932933;
+}
+#red a:hover{
+    background-color: white;
+    color: #932933;
+}
+#yellow{
+    background-color: #E0A851;
+}
+#yellow a:hover{
+    background-color: white;
+    color: #E0A851;
+}
+#blue{
+    background-color: #2E3B7F;
+}
+#blue a:hover{
+    background-color: white;
+    color: #2E3B7F;
+}
+#green{
+    background-color: #437341;
+}
+#green a:hover{
+    background-color: white;
+    color: #437341;
+}
+
+.welcome{
+    margin-top: 3%;
+    margin-left: 15%;
+    margin-right: 15%;
+    font-size:2vw;
+    padding: 2vw;
+    text-align: center;
+}
+
+
+/*.homediv, .homediv2{*/
+    /*min-width: 0;*/
+    /*max-width: 100%;*/
+    /*background: #F8F8F8;*/
+    /*margin: 20px;*/
+    /*padding: 20px;*/
+    /*-webkit-border-radius: 10px;*/
+    /*-moz-border-radius: 10px;*/
+    /*border-radius: 10px;*/
+    /*text-align: center;*/
+/*}*/
+
+/*.homediv {*/
+    /*height: 250px;*/
+/*}*/
+/*#recentdiv{*/
+    /*font-size: 100%;*/
+/*}*/
+
+/* --- time div -- */
+/*}*/
+/*#timediv{*/
+    /*font-size: 5vw;*/
+/*}*/
+/*#datediv{*/
+    /*font-size: 2vw;*/
+/*}*/
+
+
+/* -----------style for quizzes home----------*/
+
+.quizhomenav {
+    font-size: 1.5vw;
+    color: #000;
+}
+.quizlinks{
+    padding: 0;
+}
+.quizlinks {
+    text-align: center;
+    font-size: 2vw;
+}
+.quizlinks li{
+    display: inline-block;
+}
+.quizlinks a{
+    color: white;
+}
+.quizhomenav a{
+    color: white;
+}
+.quizinfo{
+    width: 50%;
+    margin: 0 auto;
+    font-size:2vw;
+    padding: 2vw;
+    text-align: center;
+}
+.sidebar{
+    font-size:1.5vw;
+    text-decoration: underline;
 }
 
 /*------------style for load quiz-------------*/
 #loadquiz{
     min-width: 0;
     max-width: 100%;
-    background: #F8F8F8;
-    margin: 20px;
-    padding: 20px;
     -webkit-border-radius: 10px;
     -moz-border-radius: 10px;
     border-radius: 10px;
     text-align: center;
+    font-size: 1.5vw;
 }
 #quizHeading{
-    border: 2px solid #424445;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
-    background: #424445;
-    margin: 20px;
-    padding: 20px;
-    color: #D0D0D0;
+    width: 50%;
+    background: #2E3B7F;
+    margin: 0 auto;
+    margin-bottom: 10px;
+    padding: 1%;
+    color: white;
+    font-size:2vw;
 }
 
 #quizTable {
     border-collapse: collapse;
-    width: 75%;
-    margin-left: 12.5%;
+    width: 85%;
+    margin-left: 7.5%;
+    background-color: #f2f2f2;
 }
 
 #quizTable td, #quizTable th {
@@ -80,7 +198,7 @@ body {
 #quizTable th {
     padding-top: 12px;
     padding-bottom: 12px;
-    color: white;
+    color: black;
 }
 
 
@@ -89,21 +207,25 @@ body {
 #quizDiv{
     min-width: 0;
     max-width: 100%;
-    background: #F8F8F8;
     margin: 20px;
     padding: 20px;
     -webkit-border-radius: 10px;
     -moz-border-radius: 10px;
     border-radius: 10px;
-    color: #D0D0D0;
+    color: black;
     text-align: center;
+    font-size: 2vw;
 }
 #quizDrop{
-    margin: 20px;
+    margin: 0 auto;
+    margin-bottom: 20px;
     padding: 20px;
+    background-color: #932933;
+    width: 50%;
 }
 #quizDropLabel{
-    color: #000;
+    color: white;
+    font-size: 2vw;
 }
 
 input[type=text], select {
@@ -116,30 +238,69 @@ input[type=text], select {
     box-sizing: border-box;
 }
 label{
-    color: #D0D0D0;
+    color: white;
 }
 #quizSingle{
-    border: 2px solid #424445;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
-    background: #424445;
+    background: #437341;
     margin-right: 40px;
     margin-bottom: 20px;
     padding: 20px;
-    color: black;
+}
+#nameinputid{
+    background-color: #2E3B7F;
+    margin-right: 40px;
+    margin-bottom: 20px;
+    padding: 20px;
 }
 .nameinput{
-    width: 50%;
-    margin-left: 25%;
+    width: 75%;
+    margin-left: 12.5%;
 }
 .quiznums {
     left: 50%;
     right: auto;
     text-align: center;
     transform: translate(-50%, 0);
+    font-size: 2vw;
+}
+.submitbut{
+    margin-bottom: 50px;
+    width: 20vw;
+    font-size: 2vw;
+}
+.btn-primary{
+    font-size:2vw;
 }
 
+/*---------style for students page--------*/
+.studentpicker{
+    width: 35%;
+    margin: 0 auto;
+    font-size:2vw;
+    text-align: center;
+}
+#resultstable {
+    border-collapse: collapse;
+    width: 75%;
+    margin: 0 auto;
+    background-color: #f2f2f2;
+}
 
+#resultstable td, #resultstable th {
+    border: 1px solid #ddd;
+    text-align: left;
+    padding: 8px;
+}
+#resultstable tr{
+    font-size: 1.2vw;
+}
+#resultstable tr:nth-child(even){background-color: #f2f2f2}
 
+#resultstable tr:hover {background-color: #ddd;}
 
+#resultstable th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    color: black;
+    font-size:1.8vw;
+}
