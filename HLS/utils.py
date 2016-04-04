@@ -1,6 +1,7 @@
 import requests
 import json
 
+
 class Quizzes:
     def __init__(self, host):
         self.raw_json = requests.get('http://' + host + '/api/v1/quizdata')

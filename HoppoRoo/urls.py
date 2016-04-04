@@ -22,7 +22,10 @@ admin.autodiscover()
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^home$', views.home),
+    url(r'^login/$', views.login_view),
+    url(r'^logout/$', views.logout_view),
+    url(r'^auth/$', views.auth_view),
+    url(r'^home/$', views.home),
     url(r'^quizview$', views.quiz_view),
     url(r'^quizzes$', views.quizzes_home),
     url(r'^quizzes/load_quiz$', views.load_quiz),
@@ -37,3 +40,9 @@ urlpatterns = [
     url(r'^api/v1/quizdata', views.quiz_data),
 
 ]
+
+
+# url(r'^accounts/login/$', 'django.contrib.auth.views.login', name='login'),
+# url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', name='logout'),
+# url(r'^accounts/auth/$', views.auth_view),
+# url(r'^accounts/invalid/$', views.invalid_view),

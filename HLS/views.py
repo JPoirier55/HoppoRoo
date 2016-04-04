@@ -7,32 +7,66 @@ import datetime
 from models import Quiz
 import sys
 import requests
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login, logout
 
 
+def auth_view(request):
+    username = request.POST.get('Username', '')
+    password = request.POST.get('Password', '')
+    print request.POST
+    user = authenticate(username=username, password=password)
+
+    if user is not None:
+        login(request, user)
+        print 'user logged in'
+        return HttpResponseRedirect('/home/')
+    else:
+        print 'error'
+        return HttpResponseRedirect('/login/')
+
+
+def logout_view(request):
+    logout(request)
+    msg = 'you have been loggd out'
+    return render(request, 'registration/login.html', {'msg': msg})
+
+
+def login_view(request):
+    print HttpResponse()
+    return render(request, 'registration/login.html')
+
+
+@login_required(login_url='/login/')
 def home(request):
     """
     Home page with access to most recent quiz and the ability to login
     :param request: request from current page
     :return: rendered template with data
     """
+    print request.user
     quiz_obj = utils.Quizzes(request.META['HTTP_HOST'])
     chosen_quiz = quiz_obj.get_most_recent_quiz()
     return render(request, 'home.html', {'recent_quiz': chosen_quiz,
                                          'quiz_name': chosen_quiz['name']})
 
 
+@login_required(login_url='/login/')
 def quizzes_home(request):
     return render(request, 'quizzes_home.html')
 
 
+@login_required(login_url='/login/')
 def quizzes(request):
     return render(request, 'quiz_view_1.html')
 
 
+@login_required(login_url='/login/')
 def quiz_view(request):
     return render(request, 'quiz_view.html')
 
 
+@login_required(login_url='/login/')
 def load_quiz(request):
     """
     Page to load and view quizzes
@@ -50,6 +84,7 @@ def load_quiz(request):
                                               'quiz_names': quiz_obj.get_quiz_names()})
 
 
+@login_required(login_url='/login/')
 def create_quiz(request):
     """
     Page that allows user to create quiz and save it
@@ -59,9 +94,12 @@ def create_quiz(request):
     return render(request, 'create_quiz.html')
 
 
+@login_required(login_url='/login/')
 def help(request):
     return render(request, 'help.html')
 
+
+@login_required(login_url='/login/')
 def results(request):
     results = {'quiz1': {'class_av': '25',
                          'class_median': '34',
@@ -83,6 +121,8 @@ def results(request):
 
     return render(request, 'results.html', {'results_list': results})
 
+
+@login_required(login_url='/login/')
 def students(request):
     names = {'Jake': {'quizzes': ['98', '43', '34', '100'],
                       'quiznames': ['quiz1', 'quiz2', 'quiz3', 'quiz4']},

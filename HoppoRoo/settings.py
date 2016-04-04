@@ -128,3 +128,5 @@ SITE_ROOT = os.path.dirname(os.path.realpath(__file__))
 STATIC_URL = '/static/'
 
 STATIC_ROOT = SITE_ROOT + '/static/'
+
+LOGIN_REDIRECT_URL = '/login/'

@@ -1,0 +1,26 @@
+{% extends "index.html" %}
+{% block content %}
+{% load static  %}
+
+    <div class="page-header">
+        <img id="logo" src="{% static "res/Logo_trans_back.png" %}">
+    </div>
+    <div class="col-md-12">
+        <div class="col-md-6 login">
+            <form action='/auth/' method='POST'> {% csrf_token %}
+                <div >
+                    <label for='username'> Username </label>
+                    <input type='text' name='Username' id='username'>
+                    <label for='password'>Password </label>
+                    <input type='password' name='Password' id='password'>
+                    <input type='submit' value='login'>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+         {{ msg }}
+    </div>
+
+{% endblock %}
