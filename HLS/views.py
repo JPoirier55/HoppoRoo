@@ -30,7 +30,9 @@ def quizzes(request):
 
 
 def quiz_view(request):
-    return render(request, 'quiz_view.html')
+    quiz = requests.get("http://192.168.42.1/api/v1/quizdata")
+    quiz = json.loads(quiz.text)	
+    return render(request, 'quiz_view_1.html', {'quiz': quiz[0]})
 
 
 def load_quiz(request):

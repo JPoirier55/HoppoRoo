@@ -1,29 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    {% load static  %}
-    <meta charset="UTF-8">
-    <title>Title</title>
-    <script src="{% static "js/jquery.min.js" %}"></script>
-    <script src="https://code.highcharts.com/highcharts.js"></script>
+{% extends "index.html" %}
+{% load static %}
+{% block content %}
+<div class="col-md-4" style="float: right; padding-bottom: 50px;">
+    <img style="float: right;" id="logo" width="600px" src="{% static "res/Logo_trans_back.png" %}" >
+</div>
+
+
+<script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="https://code.highcharts.com/modules/exporting.js"></script>
 
+    <div class="col-md-12" id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+    <div class="col-md-12" style="text-align: center;">
+        <div style="font-size: 1.2vw; width: 50%; margin: 0 auto;">
+            <p>{{ quiz.name }} </p>
+	    <ul>
+		{% for answer in quiz.answers %}
+		<li>Correct: {{ answer.correct }}</li>
+		Choices:
+			{% for choice in answer.choices %}
+			{{ choice }}
+			{% endfor %}
+	    		{% endfor %}
+		</ul>
+		
+        </div>
 
-</head>
-<body>
-    This can be the page that can be seen by students with a chart
-
-    <div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
-
-    click <a href="/home">here</a> to return back to dashboard
-
+    </div>
     <script>
         $(function () {
             $(document).ready(function () {
                 Highcharts.setOptions({
                     global: {
                         useUTC: false
-                    }
+                    },
+                    plotOptions: {
+                        column: {
+                            colorByPoint: true
+                        }
+                    },
+                    colors: [
+                        '#932933',
+                        '#00ED77',
+                        '#2E3B7F',
+                        '#FCF528'
+                    ]
                 });
 
                 $('#container').highcharts({
@@ -31,6 +51,7 @@
                         type: 'column',
                         animation: Highcharts.svg, // don't animate in old IE
                         marginRight: 100,
+                        backgroundColor: '#F7F7CD',
                         events: {
                             load: function () {
 
@@ -49,7 +70,7 @@
                                      }).then(function() {
                                         var x = (new Date()).getTime(), // current time
                                                 y = Math.random();
-                                        series.setData([response_json['A'], response_json['B'], response_json['C'], response_json['D']], true, false, true);
+                                        series.setData([response_json['A'] , response_json['B'], response_json['C'], response_json['D']], true, false, true);
                                     }))
 
 
@@ -57,14 +78,21 @@
                             }
                         }
                     },
+
                     title: {
-                        text: 'Answers to Question'
+                        text: '{{ quiz.name }}',
+                        style:{
+                            color: '#437341',
+                            fontSize: '45px',
+                            fontFamily: "teacher"
+                        }
                     },
                     xAxis: {
                         labels: {
-                            style: {
-                                color: 'red',
-                                fontSize:'50px'
+                            style:{
+                                color: '#932933',
+                                fontSize: '45px',
+                                fontFamily: "teacher"
                             }
                         },
                         categories: [
@@ -76,9 +104,10 @@
                     },
                     yAxis: {
                         title: {
-                            style: {
-                                color: 'green',
-                                fontSize:'20px'
+                            style:{
+                                color: '#932933',
+                                fontSize: '25px',
+                                fontFamily: "teacher"
                             },
                             text: 'Hoppys with Answer'
                         },
@@ -105,5 +134,4 @@
             });
         });
     </script>
-</body>
-</html>
+{% endblock %}
