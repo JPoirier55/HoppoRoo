@@ -1,0 +1,33 @@
+[
+  {
+	"id": 1,
+	"question": "What was CSU's former name in 1879?",
+	"choices": ["Colorado Agricultural College", "Colorado Cowboy College", "Colorado State University", "Mechanical and Agricultural College of Colorado"],
+	"correct": "Colorado Agricultural College"
+	},
+	{"id": 2,
+	"question": "What year was the first CU-CSU football game played?",
+	"choices": ["1890", "1901", "1930", "1893"],
+	"correct": "1893"
+	},
+	{"id": 3,
+	"question": "How many of CSU's mascot, Cam the Ram, have there been?",
+	"choices": ["15", "53", "16", "24"],
+	"correct": "24"
+	},
+	{"id": 4,
+	"question": "What kind of Ram is Cam the Ram?",
+	"choices": ["Dodge Ram", "Rambouillet Ram", "Suffolk Ram", "Merino Ram"],
+	"correct": "Rambouillet Ram"
+	},
+	{"id": 5,
+	"question": "What is the name of the trophy awarded to the winner of the annual CSU-Wyoming football game?",
+	"choices": ["The One Ring", "The Stanley Cup", "The Bronze Boot", "The Victory Bell"],
+	"correct": "The Bronze Boot"
+	},
+	{"id": 6,
+	"question": "What movie was based off the Stanley Hotel in Estes Park?",
+	"choices": ["The Shining", "Ocean's 11", "Die Hard", "Ocean's 12"],
+	"correct": "The Shining"
+	}
+]

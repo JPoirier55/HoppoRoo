@@ -1,34 +1,75 @@
 {% extends "index.html" %}
 {% load static %}
 {% block content %}
-<div class="col-md-4" style="float: right; padding-bottom: 50px;">
-    <img style="float: right;" id="logo" width="600px" src="{% static "res/Logo_trans_back.png" %}" >
-</div>
-
-
-<script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="https://code.highcharts.com/modules/exporting.js"></script>
-
-    <div class="col-md-12" id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
-    <div class="col-md-12" style="text-align: center;">
-        <div style="font-size: 1.2vw; width: 50%; margin: 0 auto;">
-            <p>{{ quiz.name }} </p>
-	    <ul>
-		{% for answer in quiz.answers %}
-		<li>Correct: {{ answer.correct }}</li>
-		Choices:
-			{% for choice in answer.choices %}
-			{{ choice }}
-			{% endfor %}
-	    		{% endfor %}
-		</ul>
-		
+	<div id="questions" class="col-md-12" style="visibility: hidden;">
+        <div class="col-md-6" id="questions_div">
+            <span id="question_heading"></span>
+        </div>
+        <div class="col-md-6" id="container"></div>
+        <div class="choice col-md-6">
+                    A: <span id="choice_a"></span><br>
+                    B: <span id="choice_b"></span><br>
+                    C: <span id="choice_c"></span><br>
+                    D: <span id="choice_d"></span><br>
+            <div id="correctdiv" style="visibility: hidden; background-color: #932933; color:white; text-align: center;">
+            Correct Answer: <span id="correct" ></span>
+        </div>
         </div>
 
+	</div>
+
+    <div id='quizbuttondiv' class="col-md-12">
+        <div id="startquizbutton">
+            <button class="btn btn-primary btn-lg" onclick="graph()" >Start Quiz!</button>
+        </div>
     </div>
+
+    <script src="{%  static "js/highcharts.js" %}"></script>
+    <script src="{% static "js/exporting.js" %}"></script>
+
     <script>
-        $(function () {
-            $(document).ready(function () {
+	    var index = 0;
+        var json_global = '';
+        $.getJSON("static/js/trivia.json", function(json) {
+                json_global = json;
+			    console.log(json[index]);
+
+            });
+		function nextquestion(){
+            $('#quest_button').attr('onclick', 'showCorrect()').html('Show Answer!');
+            $('#correctdiv').css('visibility', 'hidden');
+            $('#question_heading').html(json_global[index]['question']);
+                $('#choice_a').html(json_global[index]['choices'][0]);
+                $('#choice_b').html(json_global[index]['choices'][1]);
+                $('#choice_c').html(json_global[index]['choices'][2]);
+                $('#choice_d').html(json_global[index]['choices'][3]);
+        }
+
+        function showCorrect(){
+            $('#correctdiv').css('visibility', 'visible')
+            $('#correct').html(json_global[index]['correct']);
+            $('#quest_button').attr('onclick', 'nextquestion()').html('Next Question!');
+            index++;
+            if(index > json_global.length -1){
+                index = 0;
+            }
+        }
+
+        function graph() {
+            $('.linkssmall').before('<div class="col-md-12" style="text-align: center;"> \
+            <div id="nextquestionbutton" style="visibility: hidden;"> \
+                <button id="quest_button" class="btn btn-primary" onclick="showCorrect()" >Show Answer!</button> \
+                </div> \
+            </div>');
+            $('#questions').css('visibility', 'visible');
+            $('#nextquestionbutton').css('visibility', 'visible');
+            $('#quizbuttondiv').css('visibility', 'hidden');
+            nextquestion();
+			}
+
+		$(function () {
+
+
                 Highcharts.setOptions({
                     global: {
                         useUTC: false
@@ -59,17 +100,34 @@
                                 var series = this.series[0];
                                 var response_json;
                                 setInterval(function () {
-                                    $.when(
-                                    $.ajax({
-                                       type: "GET",
+{#                                    var jText = '{ "A":' + (Math.floor(Math.random() * (20 - 0 + 1)) + 0) + ',' +#}
+{#                                            '"B":' + (Math.floor(Math.random() * (20 - 0 + 1)) + 0) + ',' +#}
+{#                                            '"C":' + (Math.floor(Math.random() * (20 - 0 + 1)) + 0) + ',' +#}
+{#                                            '"D":' + (Math.floor(Math.random() * (20 - 0 + 1)) + 0) +'}';#}
+{##}
+{#                                    var jObj = JSON.parse(jText);#}
+{#                                    console.log(jObj);#}
+{#                                    var A_Answers = 0;#}
+{#                                    var B_Answers = 0;#}
+{#                                    var C_Answers = 0;#}
+{#                                    var D_Answers = 0;#}
+{#                                    $.each( jObj, function( key, val ) {#}
+{#                                        if(key=="A")A_Answers=parseInt(val);#}
+{#                                        if(key=="B")B_Answers=parseInt(val);#}
+{#                                        if(key=="C")C_Answers=parseInt(val);#}
+{#                                        if(key=="D")D_Answers=parseInt(val);#}
+{#                                    });#}
+{##}
+{#                                    series.setData([A_Answers, B_Answers,C_Answers,D_Answers],true,false,true);#}
+                                  $.when(
+                                   $.ajax({
+                                      type: "GET",
                                        url: "api/v1/data",
                                        success: function (response) {
                                          console.log(JSON.parse(response));
                                          response_json = JSON.parse(response);
-                                         }
+                                        }
                                      }).then(function() {
-                                        var x = (new Date()).getTime(), // current time
-                                                y = Math.random();
                                         series.setData([response_json['A'] , response_json['B'], response_json['C'], response_json['D']], true, false, true);
                                     }))
 
@@ -80,10 +138,10 @@
                     },
 
                     title: {
-                        text: '{{ quiz.name }}',
+                        text: '',
                         style:{
                             color: '#437341',
-                            fontSize: '45px',
+                            fontSize: '25px',
                             fontFamily: "teacher"
                         }
                     },
@@ -91,7 +149,7 @@
                         labels: {
                             style:{
                                 color: '#932933',
-                                fontSize: '45px',
+                                fontSize: '25px',
                                 fontFamily: "teacher"
                             }
                         },
@@ -109,8 +167,15 @@
                                 fontSize: '25px',
                                 fontFamily: "teacher"
                             },
-                            text: 'Hoppys with Answer'
+                            text: ''
                         },
+						labels: {
+							style: {
+								color: '#437341',
+                                fontSize: '25px',
+                                fontFamily: "teacher"
+							}
+						},
                         allowDecimals: false,
                         plotLines: [{
                             value: 0,
@@ -131,7 +196,7 @@
 
                     }]
                 });
-            });
-        });
+            })	
+		
     </script>
 {% endblock %}

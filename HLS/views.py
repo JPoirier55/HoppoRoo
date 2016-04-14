@@ -37,7 +37,7 @@ def login_view(request):
     return render(request, 'registration/login.html')
 
 
-@login_required(login_url='/login/')
+# @login_required(login_url='/login/')
 def home(request):
     """
     Home page with access to most recent quiz and the ability to login
@@ -51,24 +51,24 @@ def home(request):
                                          'quiz_name': chosen_quiz['name']})
 
 
-@login_required(login_url='/login/')
+# @login_required(login_url='/login/')
 def quizzes_home(request):
     return render(request, 'quizzes_home.html')
 
 
-@login_required(login_url='/login/')
+# @login_required(login_url='/login/')
 def quizzes(request):
     return render(request, 'quiz_view_1.html')
 
 
-@login_required(login_url='/login/')
+# @login_required(login_url='/login/')
 def quiz_view(request):
     quiz = requests.get("http://192.168.42.1/api/v1/quizdata")
     quiz = json.loads(quiz.text)	
     return render(request, 'quiz_view_1.html', {'quiz': quiz[0]})
 
 
-@login_required(login_url='/login/')
+# @login_required(login_url='/login/')
 def load_quiz(request):
     """
     Page to load and view quizzes
@@ -86,7 +86,7 @@ def load_quiz(request):
                                               'quiz_names': quiz_obj.get_quiz_names()})
 
 
-@login_required(login_url='/login/')
+# @login_required(login_url='/login/')
 def create_quiz(request):
     """
     Page that allows user to create quiz and save it
@@ -96,12 +96,12 @@ def create_quiz(request):
     return render(request, 'create_quiz.html')
 
 
-@login_required(login_url='/login/')
+# @login_required(login_url='/login/')
 def help(request):
     return render(request, 'help.html')
 
 
-@login_required(login_url='/login/')
+# @login_required(login_url='/login/')
 def results(request):
     results = {'quiz1': {'class_av': '25',
                          'class_median': '34',
@@ -124,7 +124,7 @@ def results(request):
     return render(request, 'results.html', {'results_list': results})
 
 
-@login_required(login_url='/login/')
+# @login_required(login_url='/login/')
 def students(request):
     names = {'Jake': {'quizzes': ['98', '43', '34', '100'],
                       'quiznames': ['quiz1', 'quiz2', 'quiz3', 'quiz4']},
@@ -153,13 +153,13 @@ def data_access_point(request):
     :param request: request from current page
     :return: response object with json data
     """
-    response_data = json.loads(requests.get("http://192.168.42.16:8080").text)
-    response_data2 = json.loads(requests.get("http://192.168.42.15:8080").text)
+    response_data = json.loads(requests.get("http://192.168.42.19:8080").text)
+    response_data3 = json.loads(requests.get("http://192.168.42.18:8080").text)
 
-    output_json = {'A': int(response_data['buttonA'])+int(response_data2['buttonB']),
-                   'B': int(response_data['buttonB'])+int(response_data2['buttonB']),
-                   'C': int(response_data['buttonC'])+int(response_data2['buttonC']),
-                   'D': int(response_data['buttonD'])+int(response_data2['buttonD'])}
+    output_json = {'A': int(response_data['buttonA'])+int(response_data3['buttonA']),
+                   'B': int(response_data['buttonB'])+int(response_data3['buttonB']),
+                   'C': int(response_data['buttonC'])+int(response_data3['buttonC']),
+                   'D': int(response_data['buttonD'])+int(response_data3['buttonD'])}
 
     return HttpResponse(json.dumps(output_json))
 
