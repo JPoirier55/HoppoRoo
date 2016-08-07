@@ -2,25 +2,35 @@ from __future__ import unicode_literals
 
 from django.db import models
 
+
 class Quiz(models.Model):
     quizjson = models.TextField(null=True)
-    # name = models.CharField(max_length=256)
+    name = models.CharField(max_length=256, default='')
 
-# class Question(models.Model):
-#     question = models.CharField()
-#     quiz = models.ForeignKey(Quiz)
-#
-# class Answer(models.Model):
-#     correct = models.CharField()
-#
+    def __str__(self):
+        return self.name
 
-class Device(models.Model):
-    id = models.IntegerField(primary_key=True)
-    student = models.IntegerField(choices=[(0, 0), (1, 1), (2, 2), (3, 3)])
 
 class Student(models.Model):
-    name = models.CharField(max_length=256)
+    name = models.CharField(max_length=256, default='')
     id = models.IntegerField(primary_key=True)
 
-# class Grades(models.Model):
-#     studentId = models.ForeignKey(Student.id)
+    def __str__(self):
+        return "{0} - ID: {1}".format(self.name, self.id)
+
+
+class Device(models.Model):
+    id = models.IntegerField(primary_key=True, default=None)
+    student = models.OneToOneField(Student, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return "Device: {0} - Linked to {1}".format(self.id, self.student.name)
+
+
+class Results(models.Model):
+    quiz = models.OneToOneField(Quiz, on_delete=models.CASCADE)
+    student = models.OneToOneField(Student)
+    score = models.IntegerField(default=0)
+
+    def __str__(self):
+        return "Student: {0} - Quiz: {1} - Score: {2}".format(self.student.name, self.quiz.name, self.score)
