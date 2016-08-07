@@ -156,6 +156,11 @@ def data_access_point(request):
     return HttpResponse(json.dumps(output_json))
 
 
+def error_return(message):
+    html_error = '''<html><body><h1>{0}</h1></body></html>'''.format(message)
+    return HttpResponse(html_error)
+
+
 def create_quiz_ap(request):
     """
     Quiz data access point for storing and retrieving quiz data
@@ -164,37 +169,55 @@ def create_quiz_ap(request):
     """
     dict = json.dumps(request.POST)
     json_dict = json.loads(dict)
+    if 'correct' not in json_dict or 'choice_1' not in json_dict or 'choice_2' not in json_dict or 'choice_3' \
+            not in json_dict or 'choice_4' not in json_dict or 'name' not in json_dict or 'question' not in json_dict:
+        message = 'Error: Please fill out the entire form.'
+        return error_return(message)
+    correct = json_dict['correct'][0]
+    choice_1 = json_dict['choice_1'][0]
+    choice_2 = json_dict['choice_2'][0]
+    choice_3 = json_dict['choice_3'][0]
+    choice_4 = json_dict['choice_4'][0]
+    choices = [choice_1, choice_2, choice_3, choice_4]
+    if correct not in choices:
+        message = 'Error: One choice must be equal to correct answer.'
+        return error_return(message)
+    if len(choices) != len(set(choices)):
+        message = 'Error: Do not use duplicate choices.'
+        return error_return(message)
+    print json_dict
 
-    try:
-        with open('HLS/templates/quizdata.json', 'r') as f:
-            quizjson = json.loads(f.read())
 
-        newjson = {"id": len(quizjson),
-                   "name": json_dict['name'][0],
-                   "date_created": datetime.datetime.now().strftime('%Y-%m-%d'),
-                   "questions": json_dict['question'],
-                   "answers": []}
+    # try:
+    #     with open('HLS/templates/quizdata.json', 'r') as f:
+    #         quizjson = json.loads(f.read())
+    #
+    #     newjson = {"id": len(quizjson),
+    #                "name": json_dict['name'][0],
+    #                "date_created": datetime.datetime.now().strftime('%Y-%m-%d'),
+    #                "questions": json_dict['question'],
+    #                "answers": []}
+    #
+    #     for entry_index in range(len(json_dict['question'])):
+    #         tempdict = {"correct": json_dict['correct'][entry_index],
+    #                     "choices": [json_dict['choice_1'][entry_index],
+    #                                 json_dict['choice_2'][entry_index],
+    #                                 json_dict['choice_3'][entry_index],
+    #                                 json_dict['choice_4'][entry_index]]}
+    #         newjson['answers'].append(tempdict)
+    #
+    #     quizjson.append(newjson)
+    #
+    #     quiz_model = Quiz()
+    #     quiz_model.quizjson = json.dumps(newjson)
+    #     quiz_model.save()
+    #
+    #     with open("HLS/templates/quizdata.json", "w") as f:
+    #         json.dump(quizjson, f)
+    # except Exception, e:
+    #     sys.stderr("Cannot do something")
 
-        for entry_index in range(len(json_dict['question'])):
-            tempdict = {"correct": json_dict['correct'][entry_index],
-                        "choices": [json_dict['choice_1'][entry_index],
-                                    json_dict['choice_2'][entry_index],
-                                    json_dict['choice_3'][entry_index],
-                                    json_dict['choice_4'][entry_index]]}
-            newjson['answers'].append(tempdict)
-
-        quizjson.append(newjson)
-
-        quiz_model = Quiz()
-        quiz_model.quizjson = json.dumps(newjson)
-        quiz_model.save()
-
-        with open("HLS/templates/quizdata.json", "w") as f:
-            json.dump(quizjson, f)
-    except Exception, e:
-        sys.stderr("Cannot do something")
-
-    return HttpResponseRedirect('/create_quiz')
+    return HttpResponseRedirect('/quizzes/create_quiz')
 
 
 def quiz_data(request):
