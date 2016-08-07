@@ -4,11 +4,12 @@ from django.shortcuts import HttpResponse
 import utils
 import json
 import datetime
-from models import Quiz
+from models import Quiz, Results
 import sys
 import requests
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
+from models import Student
 
 
 def auth_view(request):
@@ -126,23 +127,28 @@ def results(request):
 
 # @login_required(login_url='/login/')
 def students(request):
-    names = {'Jake': {'quizzes': ['98', '43', '34', '100'],
-                      'quiznames': ['quiz1', 'quiz2', 'quiz3', 'quiz4']},
-             'kayla': {'quizzes': ['98', '5', '34', '80'],
-                       'quiznames': ['quiz1', 'quiz2', 'quiz3', 'quiz4']},
-             'bubba': {'quizzes': ['88', '45', '8', '88'],
-                       'quiznames': ['quiz1', 'quiz2', 'quiz3', 'quiz4']},
-             'lela': {'quizzes': ['98', '44', '44', '44'],
-                      'quiznames': ['quiz1', 'quiz2', 'quiz3', 'quiz4']}}
+    student_objs = Student.objects.all()
+    names = [student.name for student in student_objs]
+
+    results_arr = []
+
     if 'name' not in request.GET:
-        student_name = names.keys()[0]
+        student_name = names[0]
     else:
         student_name = request.GET['name']
+        student_obj = Student.objects.get(name=student_name)
+        results = Results.objects.filter(student__name=student_obj.name)
+
+        for result in results:
+            quiz_dict = {'quiz': result.quiz.name,
+                         'quiz_id': result.quiz.id,
+                         'score': result.score}
+            results_arr.append(quiz_dict)
 
     return render(request, 'students.html', {'student_list': names,
                                              'chosen_student': student_name,
-                                             'chosen_student_dict': names[student_name],
-                                             'numquizzes': range(len(names[student_name]['quizzes']))})
+                                             'results': results_arr,
+                                             })
 
 
 # ---------------------- API SECTION ----------------- #

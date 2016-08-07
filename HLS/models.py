@@ -2,25 +2,39 @@ from __future__ import unicode_literals
 
 from django.db import models
 
+
 class Quiz(models.Model):
-    quizjson = models.TextField(null=True)
-    # name = models.CharField(max_length=256)
-
-# class Question(models.Model):
-#     question = models.CharField()
-#     quiz = models.ForeignKey(Quiz)
-#
-# class Answer(models.Model):
-#     correct = models.CharField()
-#
-
-class Device(models.Model):
     id = models.IntegerField(primary_key=True)
-    student = models.IntegerField(choices=[(0, 0), (1, 1), (2, 2), (3, 3)])
+    quizjson = models.TextField(null=True)
+    name = models.CharField(max_length=256, default='')
+
+    def __str__(self):
+        return self.name
+
 
 class Student(models.Model):
-    name = models.CharField(max_length=256)
+    name = models.CharField(max_length=256, default='')
     id = models.IntegerField(primary_key=True)
 
-# class Grades(models.Model):
-#     studentId = models.ForeignKey(Student.id)
+    def __str__(self):
+        return "{0} - ID: {1}".format(self.name, self.id)
+
+
+class Device(models.Model):
+    id = models.IntegerField(primary_key=True, default=None)
+    student = models.OneToOneField(Student)
+
+    def __str__(self):
+        return "Device: {0} - Linked to {1}".format(self.id, self.student.name)
+
+
+class Results(models.Model):
+    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
+    student = models.ForeignKey(Student)
+    score = models.IntegerField(default=0)
+
+    class Meta:
+        unique_together = ('quiz', 'student')
+
+    def __str__(self):
+        return "Student: {0} - Quiz: {1} - Score: {2}".format(self.student.name, self.quiz.name, self.score)
