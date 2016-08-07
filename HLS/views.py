@@ -10,6 +10,8 @@ import requests
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from models import Student
+from results import results_metrics
+from quizzes import Quizzes
 
 
 def auth_view(request):
@@ -46,7 +48,7 @@ def home(request):
     :return: rendered template with data
     """
     print request.user
-    quiz_obj = utils.Quizzes(request.META['HTTP_HOST'])
+    quiz_obj = Quizzes(request.META['HTTP_HOST'])
     chosen_quiz = quiz_obj.get_most_recent_quiz()
     return render(request, 'home.html', {'recent_quiz': chosen_quiz,
                                          'quiz_name': chosen_quiz['name']})
@@ -80,7 +82,7 @@ def load_quiz(request):
         id = request.GET['id']
     else:
         id = 0
-    quiz_obj = utils.Quizzes(request.META['HTTP_HOST'])
+    quiz_obj = Quizzes(request.META['HTTP_HOST'])
 
     return render(request, 'load_quiz.html', {'chosen_quiz': quiz_obj.json_obj[int(id)],
                                               'quiz_count': range(len(quiz_obj.json_obj)),
@@ -104,25 +106,8 @@ def help(request):
 
 # @login_required(login_url='/login/')
 def results(request):
-    results = {'quiz1': {'class_av': '25',
-                         'class_median': '34',
-                         'std_dev': '3',
-                         'high': '56',
-                         'low': '1',
-                         'num_of_questions': '5',
-                         'subject': 'math',
-                         'name': 'some quiz i made'},
-               'quiz2': {'class_av': '25',
-                         'class_median': '3d4',
-                         'std_dev': 'f3',
-                         'high': '356',
-                         'low': '14',
-                         'num_of_questions': '54',
-                         'subject': 'science',
-                         'name': 'some other quiz'},
-               }
-
-    return render(request, 'results.html', {'results_list': results})
+    metrics = results_metrics()
+    return render(request, 'results.html', {'results_list': metrics})
 
 
 # @login_required(login_url='/login/')
@@ -136,14 +121,15 @@ def students(request):
         student_name = names[0]
     else:
         student_name = request.GET['name']
-        student_obj = Student.objects.get(name=student_name)
-        results = Results.objects.filter(student__name=student_obj.name)
 
-        for result in results:
-            quiz_dict = {'quiz': result.quiz.name,
-                         'quiz_id': result.quiz.id,
-                         'score': result.score}
-            results_arr.append(quiz_dict)
+    student_obj = Student.objects.get(name=student_name)
+    results = Results.objects.filter(student__name=student_obj.name)
+
+    for result in results:
+        quiz_dict = {'quiz': result.quiz.name,
+                     'quiz_id': result.quiz.id,
+                     'score': result.score}
+        results_arr.append(quiz_dict)
 
     return render(request, 'students.html', {'student_list': names,
                                              'chosen_student': student_name,
