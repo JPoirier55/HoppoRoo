@@ -18,14 +18,16 @@
         <div class="table-responsive" style="margin-bottom: 100px;">
             <table id="resultstable">
                 <tr>
+                <th>Quiz ID</th>
                 <th>Quiz</th>
                 <th>Grade</th>
                 </tr>
 
-                {% for index in numquizzes %}
+                {% for result in results %}
                     <tr>
-                        <td>{{ chosen_student_dict.quiznames|index:index }}</td>
-                        <td>{{ chosen_student_dict.quizzes|index:index }}</td>
+                        <td>{{ result.quiz_id }}</td>
+                        <td>{{ result.quiz }}</td>
+                        <td>{{ result.score }}</td>
                     </tr>
                 {% endfor %}
 
