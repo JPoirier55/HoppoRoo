@@ -32,7 +32,7 @@ urlpatterns = [
     url(r'^quizzes/create_quiz$', views.create_quiz),
     url(r'^quizzes/recent_quizzes$', views.create_quiz),
     url(r'^students$', views.students),
-    url(r'^results$', views.results),
+    url(r'^results$', views.results_page),
     url(r'^help', views.help),
 
     url(r'^api/v1/create_quiz_ap$', views.create_quiz_ap),

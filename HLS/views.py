@@ -10,8 +10,9 @@ import requests
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from models import Student
-from results import results_metrics
+import results
 from quizzes import Quizzes
+from data import highcharts
 
 
 def auth_view(request):
@@ -60,15 +61,12 @@ def quizzes_home(request):
 
 
 # @login_required(login_url='/login/')
-def quizzes(request):
-    return render(request, 'quiz_view_1.html')
-
-
-# @login_required(login_url='/login/')
 def quiz_view(request):
-    quiz = requests.get("http://192.168.42.1/api/v1/quizdata")
-    quiz = json.loads(quiz.text)	
-    return render(request, 'quiz_view_1.html', {'quiz': quiz[0]})
+    quiz = Quiz.objects.get(name=request.GET.get('name'))
+    return render(request, 'quiz_view_1.html', {'quiz': quiz.quizjson,
+                                                'highchart_options': highcharts.hc_quiz_view_json,
+                                                'highchart_body': highcharts.hc_quiz_view_body,
+                                                'test_script': highcharts.test_script})
 
 
 # @login_required(login_url='/login/')
@@ -105,8 +103,9 @@ def help(request):
 
 
 # @login_required(login_url='/login/')
-def results(request):
-    metrics = results_metrics()
+def results_page(request):
+    metrics = results.results_metrics()
+    # chart = results.build_chart(request, metrics)
     return render(request, 'results.html', {'results_list': metrics})
 
 
@@ -145,14 +144,14 @@ def data_access_point(request):
     :param request: request from current page
     :return: response object with json data
     """
-    response_data = json.loads(requests.get("http://192.168.42.19:8080").text)
-    response_data3 = json.loads(requests.get("http://192.168.42.18:8080").text)
-
-    output_json = {'A': int(response_data['buttonA'])+int(response_data3['buttonA']),
-                   'B': int(response_data['buttonB'])+int(response_data3['buttonB']),
-                   'C': int(response_data['buttonC'])+int(response_data3['buttonC']),
-                   'D': int(response_data['buttonD'])+int(response_data3['buttonD'])}
-
+    # response_data = json.loads(requests.get("http://192.168.42.19:8080").text)
+    # response_data3 = json.loads(requests.get("http://192.168.42.18:8080").text)
+    #
+    # output_json = {'A': int(response_data['buttonA'])+int(response_data3['buttonA']),
+    #                'B': int(response_data['buttonB'])+int(response_data3['buttonB']),
+    #                'C': int(response_data['buttonC'])+int(response_data3['buttonC']),
+    #                'D': int(response_data['buttonD'])+int(response_data3['buttonD'])}
+    output_json = {'A': 1, 'B': 2, 'C': 3, 'D': 0}
     return HttpResponse(json.dumps(output_json))
 
 
