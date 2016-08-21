@@ -13,6 +13,10 @@ from models import Student
 import results
 from quizzes import Quizzes
 from data import highcharts
+import operator
+
+
+# ------------------------AUTH SECTION-----------------------
 
 
 def auth_view(request):
@@ -41,6 +45,10 @@ def login_view(request):
     return render(request, 'registration/login.html')
 
 
+# -------------------------------------------------------------
+
+
+# -------------------MAIN PAGES--------------------------------
 # @login_required(login_url='/login/')
 def home(request):
     """
@@ -62,7 +70,10 @@ def quizzes_home(request):
 
 # @login_required(login_url='/login/')
 def quiz_view(request):
-    quiz = Quiz.objects.get(name=request.GET.get('name'))
+    if request.GET.get('name'):
+        quiz = Quiz.objects.get(name=request.GET.get('name'))
+    else:
+        quiz = Quiz.objects.all()[0]
     return render(request, 'quiz_view_1.html', {'quiz': quiz.quizjson,
                                                 'highchart_options': highcharts.hc_quiz_view_json,
                                                 'highchart_body': highcharts.hc_quiz_view_body,
@@ -104,8 +115,12 @@ def help(request):
 
 # @login_required(login_url='/login/')
 def results_page(request):
-    metrics = results.results_metrics()
-    # chart = results.build_chart(request, metrics)
+    # metrics = results.results_metrics()
+    if request.GET.get('quiz'):
+        metrics = results.results_metrics(request.GET.get('quiz'))
+        print metrics
+    print metrics
+    chart = results.build_chart(request, metrics)
     return render(request, 'results.html', {'results_list': metrics})
 
 
@@ -123,12 +138,13 @@ def students(request):
 
     student_obj = Student.objects.get(name=student_name)
     results = Results.objects.filter(student__name=student_obj.name)
-
     for result in results:
         quiz_dict = {'quiz': result.quiz.name,
                      'quiz_id': result.quiz.id,
                      'score': result.score}
         results_arr.append(quiz_dict)
+
+    results_arr = sorted(results_arr, key=operator.itemgetter('quiz_id'))
 
     return render(request, 'students.html', {'student_list': names,
                                              'chosen_student': student_name,

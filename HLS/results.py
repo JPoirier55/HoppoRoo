@@ -8,7 +8,7 @@ import utils
 import json
 
 
-def results_metrics():
+def results_metrics(quizzes):
     """
     Builds dict of values for each quiz which gets passed
     to render the page and tables
@@ -26,7 +26,7 @@ def results_metrics():
         scores = [float(result.score) for result in results]
         single_metrics['scores'] = scores
         single_metrics['name'] = quiz.name
-        single_metrics['num_of_questions'] = len(quiz_json['questions'])
+        single_metrics['num_of_questions'] = len(quiz_json)
         mean = utils.average(scores)
         single_metrics['class_av'] = mean
         single_metrics['std_dev'] = utils.std_deviation(scores, mean)

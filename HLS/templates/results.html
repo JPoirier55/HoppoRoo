@@ -7,13 +7,13 @@
         <h1 style="font-size: 7vw;">Results</h1>
     </div>
 
-{#    <div class="studentpicker" >#}
-{#       <select id="studentpickerbox" onchange="location = this.value;">#}
-{#           {% for quiz in results_list %}#}
-{#          <option value="/results?quiz={{ quiz }}" {% if chosen_quiz == quiz %}selected{% endif %}>{{ quiz }}</option>#}
-{#            {% endfor %}#}
-{#        </select>#}
-{#    </div>#}
+    <div class="studentpicker" >
+       <select id="studentpickerbox" onchange="location = this.value;">
+           {% for quiz in results_list %}
+          <option value="/results?quiz={{ quiz }}" {% if chosen_quiz == quiz %}selected{% endif %}>{{ quiz }}</option>
+            {% endfor %}
+        </select>
+    </div>
     <div class="col-md-12">
         <div class="table-responsive" style="margin-bottom: 100px;">
             <table id="resultstable">
