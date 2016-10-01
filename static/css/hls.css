@@ -349,3 +349,12 @@ label{
     float: right;
     padding-top: 50px;
 }
+
+/*----------------------pdf viewer page-----------------------*/
+
+.pdfobject-container {
+    height: 600px;
+}
+.pdfobject {
+    border: 1px solid #666;
+}
