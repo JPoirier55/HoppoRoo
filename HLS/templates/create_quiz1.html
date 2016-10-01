@@ -1,0 +1,31 @@
+{% extends "index.html" %}
+{% block content %}
+{% csrf_token %}
+
+     <div class="page-header">
+        <h1 style="font-size: 7vw;">Create a Quiz</h1>
+    </div>
+
+     <div class="col-md-12">
+            <div id="quizDiv">
+                <div id="nameinputid" class="nameinput">
+                    <label id="quizbuildlabel" for="quizDrop">Number of questions:</label>
+                        <input style="width: 15%;" class="numquestions" type="number" name="question_num" value="1" min="1" max="20">
+                        <br>
+                      <label for='id_name'>Quiz Name (Up to 32 chars) : </label>
+                         <input id='id_name'  name='name' type='text' maxlength="32" style="width: 50%;"/>
+                </div>
+                <button class="submitbut btn btn-primary">Submit</button>
+            </div>
+    </div>
+
+    <script>
+      $('.submitbut').click(function(e){
+          var num = $('.numquestions').val();
+          var name = $('#id_name').val();
+          var subject = '{{ subject }}';
+          window.location.replace('/quizzes/create_quiz/build?subject='+ subject + '&numquestions='+num+'&name='+name+'&page=0');
+        })
+    </script>
+
+{% endblock %}

@@ -96,7 +96,19 @@ def create_quiz(request):
     :param request: request from current page
     :return: rendered template for create quiz page
     """
-    return render(request, 'create_quiz.html')
+    if request.GET.get('subject'):
+        subject = request.GET.get('subject')
+    else:
+        subject = ''
+    return render(request, 'create_quiz1.html', {'subject': subject})
+
+
+def build_quiz(request):
+    param_dict = request.GET
+
+    return render(request, 'build_quiz.html', {'name': param_dict['name'],
+                                               'numquestions': int(param_dict['numquestions']),
+                                               'subject': param_dict['subject']})
 
 
 # @login_required(login_url='/login/')
@@ -164,35 +176,36 @@ def create_quiz_ap(request):
     """
     dict = json.dumps(request.POST)
     json_dict = json.loads(dict)
+    print dict
 
-    try:
-        with open('HLS/templates/quizdata.json', 'r') as f:
-            quizjson = json.loads(f.read())
-
-        newjson = {"id": len(quizjson),
-                   "name": json_dict['name'][0],
-                   "date_created": datetime.datetime.now().strftime('%Y-%m-%d'),
-                   "questions": json_dict['question'],
-                   "answers": []}
-
-        for entry_index in range(len(json_dict['question'])):
-            tempdict = {"correct": json_dict['correct'][entry_index],
-                        "choices": [json_dict['choice_1'][entry_index],
-                                    json_dict['choice_2'][entry_index],
-                                    json_dict['choice_3'][entry_index],
-                                    json_dict['choice_4'][entry_index]]}
-            newjson['answers'].append(tempdict)
-
-        quizjson.append(newjson)
-
-        quiz_model = Quiz()
-        quiz_model.quizjson = json.dumps(newjson)
-        quiz_model.save()
-
-        with open("HLS/templates/quizdata.json", "w") as f:
-            json.dump(quizjson, f)
-    except Exception, e:
-        sys.stderr("Cannot do something")
+    # try:
+    #     with open('HLS/templates/quizdata.json', 'r') as f:
+    #         quizjson = json.loads(f.read())
+    #
+    #     newjson = {"id": len(quizjson),
+    #                "name": json_dict['name'][0],
+    #                "date_created": datetime.datetime.now().strftime('%Y-%m-%d'),
+    #                "questions": json_dict['question'],
+    #                "answers": []}
+    #
+    #     for entry_index in range(len(json_dict['question'])):
+    #         tempdict = {"correct": json_dict['correct'][entry_index],
+    #                     "choices": [json_dict['choice_1'][entry_index],
+    #                                 json_dict['choice_2'][entry_index],
+    #                                 json_dict['choice_3'][entry_index],
+    #                                 json_dict['choice_4'][entry_index]]}
+    #         newjson['answers'].append(tempdict)
+    #
+    #     quizjson.append(newjson)
+    #
+    #     quiz_model = Quiz()
+    #     quiz_model.quizjson = json.dumps(newjson)
+    #     quiz_model.save()
+    #
+    #     with open("HLS/templates/quizdata.json", "w") as f:
+    #         json.dump(quizjson, f)
+    # except Exception, e:
+    #     sys.stderr("Cannot do something")
 
     return HttpResponseRedirect('/create_quiz')
 
