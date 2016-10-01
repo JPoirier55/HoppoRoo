@@ -17,7 +17,6 @@ from quizzes import Quizzes
 def auth_view(request):
     username = request.POST.get('Username', '')
     password = request.POST.get('Password', '')
-    print request.POST
     user = authenticate(username=username, password=password)
 
     if user is not None:
@@ -47,7 +46,6 @@ def home(request):
     :param request: request from current page
     :return: rendered template with data
     """
-    print request.user
     quiz_obj = Quizzes(request.META['HTTP_HOST'])
     chosen_quiz = quiz_obj.get_most_recent_quiz()
     return render(request, 'home.html', {'recent_quiz': chosen_quiz,
@@ -105,6 +103,7 @@ def create_quiz(request):
 
 def build_quiz(request):
     param_dict = request.GET
+    print param_dict
 
     return render(request, 'build_quiz.html', {'name': param_dict['name'],
                                                'numquestions': int(param_dict['numquestions']),
@@ -115,6 +114,8 @@ def build_quiz(request):
 def help(request):
     return render(request, 'help.html')
 
+def pdf_view(request):
+    return render(request, 'pdf_view.html')
 
 # @login_required(login_url='/login/')
 def results(request):
