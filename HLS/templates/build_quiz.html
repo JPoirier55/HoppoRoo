@@ -9,7 +9,7 @@
     {% for item in numquestions|get_range %}
         <div id="Page{{ item }}" class="page" {% if item != 0 %}style="display:none;"{% endif %}>
              <div id="question_form">
-                <label for='id_question' class="quizformlabel">Question:</label><input id='id_question' name='question' type='text' />
+                <label for='id_question' class="quizformlabel">Question:</label><input id='id_question' class="" name='question' type='text' />
                 <label for='id_correct' class="quizformlabel">Correct Answer:</label><input id='id_correct' name='correct' type='text' />
                 <label for='id_choice_1' class="quizformlabel">Choice 1:</label><input id='id_choice_1' name='choice_1' type='text' />
                 <label for='id_choice_2' class="quizformlabel">Choice 2:</label><input id='id_choice_2' name='choice_2' type='text' />
@@ -26,7 +26,7 @@
     </div>
     <div class="links">
         <ul class="nav" id="quizformbuttonsubmit">
-            <li id="red"><a href="javascript:void(0);" onclick="submit_quiz();">Submit Quiz</a></li>
+            <li id="red"><a href="javascript:void(0);" onclick="submit_quiz();">Review Quiz</a></li>
         </ul>
     </div>
 
@@ -54,6 +54,10 @@
                 $('#' + next).show();
                 page++;
             }
+        }
+
+        function submit_quiz(){
+
         }
     </script>
 
