@@ -14,6 +14,14 @@ from results import results_metrics
 from quizzes import Quizzes
 
 
+def test_page(request):
+    numpages = 5
+    quizzest = Quiz.objects.all()
+
+
+    return render(request, 'testingpage.html', {'numpages': len(quizzest),
+                                                'quizzes': quizzest})
+
 def auth_view(request):
     username = request.POST.get('Username', '')
     password = request.POST.get('Password', '')

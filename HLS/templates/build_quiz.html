@@ -3,45 +3,57 @@
 {% block content %}
 {% csrf_token %}
    <div class="page-header">
-        <h1 style="font-size: 7vw;">Build Quiz</h1>
+        <h1 style="font-size: 3vw;">Build Quiz</h1>
     </div>
-
-    <div class="col-md-12">
-        <label id="quizbuildlabel" >Quiz Name: </label>{{ name }}<br>
-        <label id="quizbuildlabel" >Number of questions: </label>{{ numquestions }}<br>
-        <label id="quizbuildlabel" >Subject: </label>{{ subject }}<br>
-    </div>
-
 
     {% for item in numquestions|get_range %}
-        <div id="Page{{ item }}" class="page" {% if item != 1 %}style="display: none;"{% endif %}>
-            Content of page {{ item }}
+        <div id="Page{{ item }}" class="page" {% if item != 0 %}style="display:none;"{% endif %}>
+             <div id="question_form">
+                <label for='id_question' class="quizformlabel">Question:</label><input id='id_question' name='question' type='text' />
+                <label for='id_correct' class="quizformlabel">Correct Answer:</label><input id='id_correct' name='correct' type='text' />
+                <label for='id_choice_1' class="quizformlabel">Choice 1:</label><input id='id_choice_1' name='choice_1' type='text' />
+                <label for='id_choice_2' class="quizformlabel">Choice 2:</label><input id='id_choice_2' name='choice_2' type='text' />
+                <label for='id_choice_3' class="quizformlabel">Choice 3:</label><input id='id_choice_3' name='choice_3' type='text' />
+                <label for='id_choice_4' class="quizformlabel">Choice 4:</label><input id='id_choice_4' name='choice_4' type='text' />
+             </div>
         </div>
     {% endfor %}
 
-    <input type="button" onclick="show()">
+    <div class="links">
+        <ul class="nav" id="quizformbuttonnext">
+            <li id="blue"><a href="javascript:void(0);" onclick="show_next();">Next Question</a></li>
+        </ul>
+    </div>
+    <div class="links">
+        <ul class="nav" id="quizformbuttonsubmit">
+            <li id="red"><a href="javascript:void(0);" onclick="submit_quiz();">Submit Quiz</a></li>
+        </ul>
+    </div>
 
     <script>
-        function show() {
-            var loc = window.location.search;
-            var num_pages = parseInt(loc.split('&')[1].replace('numquestions=',''));
-            var page = parseInt(loc.split('&')[3].replace('page=', ''));
-            page++;
 
-            console.log(page);
-            if(page == num_pages){
+        var pages = {{ numquestions }} -1;
+        var page = 0;
+        var current;
+        var next;
+        function show_next() {
+            if (page == pages) {
                 page = 0;
+                var temp = "Page" + pages;
+                console.log(temp);
+                $('#' + temp).hide();
+                current = "Page" + page;
+                console.log(current);
+                $('#' + current).show();
+            } else {
+                current = "Page" + page;
+                console.log(current);
+                $('#' + current).hide();
+                next = "Page" + (page + 1);
+                console.log(next);
+                $('#' + next).show();
+                page++;
             }
-            var ele = document.getElementById('Page'+page);
-            if (!ele) {
-                alert("no such element");
-                return;
-            }
-            var pages = document.getElementsByClassName('page');
-            for(var i = 0; i < pages.length; i++) {
-                pages[i].style.display = 'none';
-            }
-            ele.style.display = 'block';
         }
     </script>
 

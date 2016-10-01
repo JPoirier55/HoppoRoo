@@ -234,18 +234,40 @@ body {
     color: white;
     font-size: 2vw;
 }
+#question_form{
+    width: 50%;
+    margin-left:auto;
+    margin-right: auto
+}
 
 input[type=text], select {
     width: 100%;
-    padding: 12px 20px;
+    padding: 5px 10px;
     margin: 8px 0;
     display: inline-block;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
+    font-size: 2vw;
 }
 label{
     color: white;
+}
+.quizformlabel{
+    color: black;
+}
+
+#quizformbuttonnext, #quizformbuttonsubmit{
+    width:25%;
+    margin-right:auto;
+    margin-left:auto;
+    height:50px;
+    text-align: center;
+    color: white;
+    margin-bottom:25px;
+}
+#quizformbuttonsubmit{
+    margin-bottom:200px;
 }
 #quizSingle{
     background: #437341;
@@ -278,16 +300,16 @@ label{
 .btn-primary{
     font-size:2vw;
 }
-.continue {
-    text-align: center;
-    font-size: 2vw;
-}
-.continue li{
-    display: inline-block;
-}
-.continue a{
-    color: white;
-}
+/*.continue {*/
+    /*text-align: center;*/
+    /*font-size: 2vw;*/
+/*}*/
+/*.continue li{*/
+    /*display: inline-block;*/
+/*}*/
+/*.continue a{*/
+    /*color: white;*/
+/*}*/
 
 /*---------style for students page--------*/
 .studentpicker{
