@@ -203,7 +203,12 @@ body {
     color: black;
 }
 
+/*---------style for build quiz------------*/
 
+#quizbuildlabel{
+    color: black;
+    font-size: 2vw;
+}
 
 /*---------style for create quiz------------*/
 #quizDiv{
@@ -225,7 +230,7 @@ body {
     background-color: #932933;
     width: 50%;
 }
-#quizDropLabel{
+#quizDropLabel {
     color: white;
     font-size: 2vw;
 }
@@ -272,6 +277,16 @@ label{
 }
 .btn-primary{
     font-size:2vw;
+}
+.continue {
+    text-align: center;
+    font-size: 2vw;
+}
+.continue li{
+    display: inline-block;
+}
+.continue a{
+    color: white;
 }
 
 /*---------style for students page--------*/

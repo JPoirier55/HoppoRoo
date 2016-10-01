@@ -1,0 +1,49 @@
+{% extends "index.html" %}
+{% load range %}
+{% block content %}
+{% csrf_token %}
+   <div class="page-header">
+        <h1 style="font-size: 7vw;">Build Quiz</h1>
+    </div>
+
+    <div class="col-md-12">
+        <label id="quizbuildlabel" >Quiz Name: </label>{{ name }}<br>
+        <label id="quizbuildlabel" >Number of questions: </label>{{ numquestions }}<br>
+        <label id="quizbuildlabel" >Subject: </label>{{ subject }}<br>
+    </div>
+
+
+    {% for item in numquestions|get_range %}
+        <div id="Page{{ item }}" class="page" {% if item != 1 %}style="display: none;"{% endif %}>
+            Content of page {{ item }}
+        </div>
+    {% endfor %}
+
+    <input type="button" onclick="show()">
+
+    <script>
+        function show() {
+            var loc = window.location.search;
+            var num_pages = parseInt(loc.split('&')[1].replace('numquestions=',''));
+            var page = parseInt(loc.split('&')[3].replace('page=', ''));
+            page++;
+
+            console.log(page);
+            if(page == num_pages){
+                page = 0;
+            }
+            var ele = document.getElementById('Page'+page);
+            if (!ele) {
+                alert("no such element");
+                return;
+            }
+            var pages = document.getElementsByClassName('page');
+            for(var i = 0; i < pages.length; i++) {
+                pages[i].style.display = 'none';
+            }
+            ele.style.display = 'block';
+        }
+    </script>
+
+
+{% endblock %}

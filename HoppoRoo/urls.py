@@ -26,18 +26,21 @@ urlpatterns = [
     url(r'^logout/$', views.logout_view),
     url(r'^auth/$', views.auth_view),
     url(r'^home/$', views.home),
+    url(r'^$', views.home),
     url(r'^quizview$', views.quiz_view),
     url(r'^quizzes$', views.quizzes_home),
     url(r'^quizzes/load_quiz$', views.load_quiz),
     url(r'^quizzes/create_quiz$', views.create_quiz),
+    url(r'^quizzes/create_quiz/build$', views.build_quiz),
     url(r'^quizzes/recent_quizzes$', views.create_quiz),
     url(r'^students$', views.students),
     url(r'^results$', views.results),
     url(r'^help', views.help),
-
     url(r'^api/v1/create_quiz_ap$', views.create_quiz_ap),
     url(r'^api/v1/data$', views.data_access_point),
     url(r'^api/v1/quizdata', views.quiz_data),
+    url(r'^pdf_view$', views.pdf_view),
+
 
 ]
 
