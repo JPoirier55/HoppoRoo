@@ -1,20 +1,34 @@
 {% extends "index.html" %}
 {% load range %}
 {% block content %}
-{% csrf_token %}
+
    <div class="page-header">
         <h1 style="font-size: 3vw;">Build Quiz</h1>
+    </div>
+    <div id="overallformdiv" style="display: none;">
+        <form action='/api/v1/create_quiz_ap' method='post'>{% csrf_token %}
+            <div id="final_questionform" ></div>
+            <div id="quizformbuttonsubmitfinal" >
+                <button class="submitbut btn btn-primary">Submit</button>
+            </div>
+        </form>
     </div>
 
     {% for item in numquestions|get_range %}
         <div id="Page{{ item }}" class="page" {% if item != 0 %}style="display:none;"{% endif %}>
              <div id="question_form">
-                <label for='id_question' class="quizformlabel">Question:</label><input id='id_question' class="" name='question' type='text' />
-                <label for='id_correct' class="quizformlabel">Correct Answer:</label><input id='id_correct' name='correct' type='text' />
-                <label for='id_choice_1' class="quizformlabel">Choice 1:</label><input id='id_choice_1' name='choice_1' type='text' />
-                <label for='id_choice_2' class="quizformlabel">Choice 2:</label><input id='id_choice_2' name='choice_2' type='text' />
-                <label for='id_choice_3' class="quizformlabel">Choice 3:</label><input id='id_choice_3' name='choice_3' type='text' />
-                <label for='id_choice_4' class="quizformlabel">Choice 4:</label><input id='id_choice_4' name='choice_4' type='text' />
+                <label for='id_question{{ item }}' class="quizformlabel">Question:</label>
+                 <input id='id_question{{ item }}' name='question' type='text' />
+                <label for='id_correct{{ item }}' class="quizformlabel">Correct Answer:</label>
+                 <input id='id_correct{{ item }}' name='correct' type='text' />
+                <label for='id_choice_1{{ item }}' class="quizformlabel">Choice 1:</label>
+                 <input id='id_choice_1{{ item }}' name='choice_1' type='text' />
+                <label for='id_choice_2{{ item }}' class="quizformlabel">Choice 2:</label>
+                 <input id='id_choice_2{{ item }}' name='choice_2' type='text' />
+                <label for='id_choice_3{{ item }}' class="quizformlabel">Choice 3:</label>
+                 <input id='id_choice_3{{ item }}' name='choice_3' type='text' />
+                <label for='id_choice_4{{ item }}' class="quizformlabel">Choice 4:</label>
+                 <input id='id_choice_4{{ item }}' name='choice_4' type='text' />
              </div>
         </div>
     {% endfor %}
@@ -31,7 +45,6 @@
     </div>
 
     <script>
-
         var pages = {{ numquestions }} -1;
         var page = 0;
         var current;
@@ -57,8 +70,42 @@
         }
 
         function submit_quiz(){
-
+            $('.page').hide();
+            $('#quizformbuttonsubmit').hide();
+            $('#quizformbuttonnext').hide();
+            $('#overallformdiv').show();
+            for(i = 0; i < {{ numquestions }}; i++){
+                var question = $('#id_question'+i).val();
+                var correct = $('#id_correct'+i).val();
+                var choice1 = $('#id_choice_1'+i).val();
+                var choice2 = $('#id_choice_2'+i).val();
+                var choice3 = $('#id_choice_3'+i).val();
+                var choice4 = $('#id_choice_4'+i).val();
+                var new_list = '<br><label for="question'+(i+1)+'" class="quizformlabel"><h2>Question: '+(i+1)+'</h2><br>Name:</label> \
+                 <input id="question'+(i+1)+'" type="text" name="question'+i+'" value="'+question+'"/>\
+                 <label for="correct'+(i+1)+'" class="quizformlabel">Correct:</label> \
+                 <input id="correct'+(i+1)+'" type="text" name="correct'+i+'" value="'+correct+'"/>\
+                 <label for="choice1'+(i+1)+'" class="quizformlabel">Choice 1:</label> \
+                 <input id="choice1'+(i+1)+'" type="text" name="choice1'+i+'" value="'+choice1+'"/>\
+                 <label for="choice2'+(i+1)+'" class="quizformlabel">Choice 2 :</label> \
+                 <input id="choice2'+(i+1)+'" type="text" name="choice2'+i+'" value="'+choice2+'"/>\
+                 <label for="choice3'+(i+1)+'" class="quizformlabel">Choice 3:</label> \
+                 <input id="choice3'+(i+1)+'" type="text" name="choice3'+i+'" value="'+choice3+'"/>\
+                 <label for="choice4'+(i+1)+'" class="quizformlabel">Choice 4:</label> \
+                 <input id="choice4'+(i+1)+'" type="text" name="choice4'+i+'" value="'+choice4+'"/>';
+                $('#final_questionform').append(new_list);
+            }
         }
+
+         $('.submitbut').click(function(e){
+            if(confirm('Are you sure you want to submit this quiz?')){
+                $('.submitbut').submit();
+            }else{
+                e.stopImmediatePropagation();
+                e.preventDefault();
+            }
+        })
+
     </script>
 
 

@@ -206,11 +206,15 @@ body {
 /*---------style for build quiz------------*/
 
 #quizbuildlabel{
-    color: black;
+    color: white;
     font-size: 2vw;
 }
 
 /*---------style for create quiz------------*/
+.numquestions{
+    padding-left: 15px;
+}
+
 #quizDiv{
     min-width: 0;
     max-width: 100%;
@@ -242,7 +246,7 @@ body {
 
 input[type=text], select {
     width: 100%;
-    padding: 5px 10px;
+    padding: 5px 25px;
     margin: 8px 0;
     display: inline-block;
     border: 1px solid #ccc;
@@ -257,7 +261,7 @@ label{
     color: black;
 }
 
-#quizformbuttonnext, #quizformbuttonsubmit{
+#quizformbuttonnext, #quizformbuttonsubmit, #quizformbuttonsubmitfinal{
     width:25%;
     margin-right:auto;
     margin-left:auto;
@@ -265,8 +269,21 @@ label{
     text-align: center;
     margin-bottom:25px;
 }
-#quizformbuttonsubmit{
+#quizformbuttonsubmit, #quizformbuttonsubmitfinal{
     margin-bottom:200px;
+}
+#final_questionform{
+    width:75%;
+    display:block;
+    margin-left:auto;
+    margin-right:auto;
+}
+#final_questionformbutton{
+    margin-bottom:200px;
+    width:25%;
+    display:block;
+    margin-left:auto;
+    margin-right:auto;
 }
 #quizSingle{
     background: #437341;

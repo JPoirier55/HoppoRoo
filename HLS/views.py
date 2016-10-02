@@ -183,38 +183,34 @@ def create_quiz_ap(request):
     :param request: request from current page
     :return: redirect back to page while
     """
-    dict = json.dumps(request.POST)
-    json_dict = json.loads(dict)
-    print dict
 
-    # try:
-    #     with open('HLS/templates/quizdata.json', 'r') as f:
-    #         quizjson = json.loads(f.read())
-    #
-    #     newjson = {"id": len(quizjson),
-    #                "name": json_dict['name'][0],
-    #                "date_created": datetime.datetime.now().strftime('%Y-%m-%d'),
-    #                "questions": json_dict['question'],
-    #                "answers": []}
-    #
-    #     for entry_index in range(len(json_dict['question'])):
-    #         tempdict = {"correct": json_dict['correct'][entry_index],
-    #                     "choices": [json_dict['choice_1'][entry_index],
-    #                                 json_dict['choice_2'][entry_index],
-    #                                 json_dict['choice_3'][entry_index],
-    #                                 json_dict['choice_4'][entry_index]]}
-    #         newjson['answers'].append(tempdict)
-    #
-    #     quizjson.append(newjson)
-    #
-    #     quiz_model = Quiz()
-    #     quiz_model.quizjson = json.dumps(newjson)
-    #     quiz_model.save()
-    #
-    #     with open("HLS/templates/quizdata.json", "w") as f:
-    #         json.dump(quizjson, f)
-    # except Exception, e:
-    #     sys.stderr("Cannot do something")
+
+
+    post_dict = request.POST
+    question_count = 0
+    question_elements = []
+    for key,value in post_dict.iteritems():
+        if 'question' in key:
+            question_count += 1
+    for i in range(question_count):
+        index = str(i)
+        temp_dict = {'question': post_dict['question'+index],
+                     'correct': post_dict['correct'+index],
+                     'choice1': post_dict['choice1'+index],
+                     'choice2': post_dict['choice2' + index],
+                     'choice3': post_dict['choice3' + index],
+                     'choice4': post_dict['choice4' + index]}
+        question_elements.append(temp_dict)
+    print question_elements
+
+
+
+
+
+
+
+    # quiz_model.save()
+
 
     return HttpResponseRedirect('/create_quiz')
 
