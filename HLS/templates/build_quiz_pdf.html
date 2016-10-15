@@ -1,0 +1,149 @@
+{% extends 'index.html' %}
+{% load range %}
+{% block content %}
+
+   <div class="page-header">
+        <h1 style="font-size: 3vw;">Build PDF Quiz</h1>
+    <p class="build_quiz_info">These quiz questions only require a correct answer and four choices corresponding
+    to a predefined quiz created on PDF slides. Make sure all choices are filled out, with one
+    sure answer and the choices are not duplicated. Scroll through each question with
+   next question button, and submit for review with the review quiz button.</p>
+    </div>
+    <div id="overallformdiv" style="display: none;">
+        <form action='/api/v1/create_quiz_ap?pdf=true' method='post'>{% csrf_token %}
+            <div id="final_questionform" ></div>
+            <div id="quizformbuttonsubmitfinal">
+                <button class="submitbut btn btn-primary">Submit</button>
+            </div>
+        </form>
+    </div>
+
+    {% for item in numquestions|get_range %}
+        <div id="Page{{ item }}" class="page" {% if item != 0 %}style="display:none;"{% endif %}>
+             <div id="question_form">
+                <label for='id_question{{ item }}' class="quizformlabel">Question number:</label>
+                 {{ item }}<br>
+                <label for='pdf_choice_select{{ item }}' class="quizformlabel">Correct Answer:</label>
+                 <select id="pdf_choice_select{{ item }}">
+                  <option value="a">A</option>
+                  <option value="b">B</option>
+                  <option value="c">C</option>
+                  <option value="d">D</option>
+                </select>
+             </div>
+        </div>
+    {% endfor %}
+
+    <div class="links">
+        <ul class="nav" id="quizformbuttonnext">
+            <li id="blue"><a href="javascript:void(0);" onclick="show_next();">Next Question</a></li>
+        </ul>
+    </div>
+    <div class="links">
+        <ul class="nav" id="quizformbuttonsubmit">
+            <li id="red"><a href="javascript:void(0);" onclick="submit_quiz();">Review Quiz</a></li>
+        </ul>
+    </div>
+
+    <script>
+        var pages = {{ numquestions }} -1;
+        var page = 0;
+        var current;
+        var next;
+        function show_next() {
+            if (page == pages) {
+                page = 0;
+                var temp = "Page" + pages;
+                console.log(temp);
+                $('#' + temp).hide();
+                current = "Page" + page;
+                console.log(current);
+                $('#' + current).show();
+            } else {
+                current = "Page" + page;
+                console.log(current);
+                $('#' + current).hide();
+                next = "Page" + (page + 1);
+                console.log(next);
+                $('#' + next).show();
+                page++;
+            }
+        }
+
+        function submit_quiz(){
+            $('.page').hide();
+            $('#quizformbuttonsubmit').hide();
+            $('#quizformbuttonnext').hide();
+            $('#overallformdiv').show();
+            var name = '{{ name }}';
+            var subject = '{{ subject }}';
+            var name_subject = '<br><label for="quizname" class="quizformlabel"><h2>Quiz Name:</h2></label> \
+                 <input id="quizname" type="text" name="quizname" value="'+name+'"/>\
+                 <br><label for="quizsubject" class="quizformlabel"><h2>Quiz Subject:</h2></label> \
+                 <input id="quizsubject" type="text" name="quizsubject" value="'+subject+'"/>';
+            $('#final_questionform').append(name_subject);
+            for(i = 0; i < {{ numquestions }}; i++){
+                var question = $('#id_question'+i).val();
+                var correct = $('#pdf_choice_select'+(i)).find(":selected").val();
+                var new_list;
+                // This is the only way I could get it to work since setting seleted in
+                // top div did not work correctly. Bad code that works:
+                switch (correct){
+                    case 'a':
+                        new_list = '<br><label class="quizformlabel"><h2>Question: '+(i+1)+'</h2></label><br>\
+                         <label for="correct'+(i)+'" class="quizformlabel">Correct:</label> \
+                         <select id="correct'+(i)+'" name="question'+i+'">\
+                          <option value="a" selected>A</option>\
+                          <option value="b">B</option>\
+                          <option value="c">C</option>\
+                          <option value="d">D</option>\
+                        </select>';
+                        break;
+                    case 'b':
+                        new_list = '<br><label class="quizformlabel"><h2>Question: '+(i+1)+'</h2></label><br>\
+                             <label for="correct'+(i)+'" class="quizformlabel">Correct:</label> \
+                             <select id="correct'+(i)+'" name="question'+i+'">\
+                              <option value="a">A</option>\
+                              <option value="b" selected>B</option>\
+                              <option value="c" >C</option>\
+                              <option value="d">D</option>\
+                            </select>';
+                        break;
+                    case 'c':
+                        new_list = '<br><label class="quizformlabel"><h2>Question: '+(i+1)+'</h2></label><br>\
+                         <label for="correct'+(i)+'" class="quizformlabel">Correct:</label> \
+                         <select id="correct'+(i)+'" name="question'+i+'">\
+                          <option value="a">A</option>\
+                          <option value="b">B</option>\
+                          <option value="c" selected>C</option>\
+                          <option value="d">D</option>\
+                        </select>';
+                        break;
+                    case 'd':
+                        new_list = '<br><label class="quizformlabel"><h2>Question: '+(i+1)+'</h2></label><br>\
+                         <label for="correct'+(i)+'" class="quizformlabel">Correct:</label> \
+                         <select id="correct'+(i)+'" name="question'+i+'">\
+                          <option value="a">A</option>\
+                          <option value="b">B</option>\
+                          <option value="c">C</option>\
+                          <option value="d" selected>D</option>\
+                        </select>';
+                        break;
+                }
+                $('#final_questionform').append(new_list);
+            }
+        }
+
+         $('.submitbut').click(function(e){
+            if(confirm('Are you sure you want to submit this quiz?')){
+                $('.submitbut').submit();
+            }else{
+                e.stopImmediatePropagation();
+                e.preventDefault();
+            }
+        })
+
+    </script>
+
+
+{% endblock %}

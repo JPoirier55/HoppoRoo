@@ -7,6 +7,37 @@ class Quiz(models.Model):
     id = models.IntegerField(primary_key=True)
     quizjson = models.TextField(null=True)
     name = models.CharField(max_length=256, default='')
+    MATH = 'Math'
+    SCIENCE = 'Science'
+    SUBJECT = (
+        (MATH, 'Math'),
+        (SCIENCE, 'Science'),
+    )
+    subject = models.CharField(
+        max_length=10,
+        choices=SUBJECT,
+        default=MATH,
+    )
+
+    def __str__(self):
+        return self.name
+
+
+class PDFQuiz(models.Model):
+    id = models.IntegerField(primary_key=True)
+    quizjson = models.TextField(null=True)
+    name = models.CharField(max_length=256, default='')
+    MATH = 'Math'
+    SCIENCE = 'Science'
+    SUBJECT = (
+        (MATH, 'Math'),
+        (SCIENCE, 'Science'),
+    )
+    subject = models.CharField(
+        max_length=10,
+        choices=SUBJECT,
+        default=MATH,
+    )
 
     def __str__(self):
         return self.name

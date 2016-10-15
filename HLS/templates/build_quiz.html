@@ -4,9 +4,13 @@
 
    <div class="page-header">
         <h1 style="font-size: 3vw;">Build Quiz</h1>
+   <p class="build_quiz_info">Please fill out the question, correct answer and the four choices.
+       Make sure all choices are filled out, with one
+    sure answer and the choices are not duplicated. Scroll through each question with
+   next question button, and submit for review with the review quiz button.</p>
     </div>
     <div id="overallformdiv" style="display: none;">
-        <form action='/api/v1/create_quiz_ap' method='post'>{% csrf_token %}
+        <form action='/api/v1/create_quiz_ap?pdf=false' method='post'>{% csrf_token %}
             <div id="final_questionform" ></div>
             <div id="quizformbuttonsubmitfinal" >
                 <button class="submitbut btn btn-primary">Submit</button>
@@ -74,6 +78,13 @@
             $('#quizformbuttonsubmit').hide();
             $('#quizformbuttonnext').hide();
             $('#overallformdiv').show();
+            var name = '{{ name }}';
+            var subject = '{{ subject }}';
+            var name_subject = '<br><label for="quizname" class="quizformlabel"><h2>Quiz Name:</h2></label> \
+                 <input id="quizname" type="text" name="quizname" value="'+name+'"/>\
+                 <br><label for="quizsubject" class="quizformlabel"><h2>Quiz Subject:</h2></label> \
+                 <input id="quizsubject" type="text" name="quizsubject" value="'+subject+'"/>';
+            $('#final_questionform').append(name_subject);
             for(i = 0; i < {{ numquestions }}; i++){
                 var question = $('#id_question'+i).val();
                 var correct = $('#id_correct'+i).val();
