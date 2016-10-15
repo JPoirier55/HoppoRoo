@@ -206,19 +206,29 @@ body {
 /*---------style for build quiz------------*/
 
 #quizbuildlabel{
-    color: black;
+    color: white;
     font-size: 2vw;
 }
 
 /*---------style for create quiz------------*/
+.numquestions{
+    padding-left: 15px;
+}
+#pdf_check{
+    width:30px;
+    height:30px;
+}
+.build_quiz_info{
+    width:50%;
+    margin-left:auto;
+    margin-right:auto;
+    font-size:1.3vw;
+}
 #quizDiv{
     min-width: 0;
     max-width: 100%;
     margin: 20px;
     padding: 20px;
-    -webkit-border-radius: 10px;
-    -moz-border-radius: 10px;
-    border-radius: 10px;
     color: black;
     text-align: center;
     font-size: 2vw;
@@ -234,18 +244,52 @@ body {
     color: white;
     font-size: 2vw;
 }
+#question_form{
+    width: 50%;
+    margin-left:auto;
+    margin-right: auto
+}
 
 input[type=text], select {
     width: 100%;
-    padding: 12px 20px;
+    padding: 5px 25px;
     margin: 8px 0;
     display: inline-block;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
+    font-size: 2vw;
 }
 label{
     color: white;
+}
+.quizformlabel{
+    color: black;
+}
+
+#quizformbuttonnext, #quizformbuttonsubmit, #quizformbuttonsubmitfinal{
+    width:25%;
+    margin-right:auto;
+    margin-left:auto;
+    height:50px;
+    text-align: center;
+    margin-bottom:25px;
+}
+#quizformbuttonsubmit, #quizformbuttonsubmitfinal{
+    margin-bottom:200px;
+}
+#final_questionform{
+    width:75%;
+    display:block;
+    margin-left:auto;
+    margin-right:auto;
+}
+#final_questionformbutton{
+    margin-bottom:200px;
+    width:25%;
+    display:block;
+    margin-left:auto;
+    margin-right:auto;
 }
 #quizSingle{
     background: #437341;
@@ -278,16 +322,16 @@ label{
 .btn-primary{
     font-size:2vw;
 }
-.continue {
-    text-align: center;
-    font-size: 2vw;
-}
-.continue li{
-    display: inline-block;
-}
-.continue a{
-    color: white;
-}
+/*.continue {*/
+    /*text-align: center;*/
+    /*font-size: 2vw;*/
+/*}*/
+/*.continue li{*/
+    /*display: inline-block;*/
+/*}*/
+/*.continue a{*/
+    /*color: white;*/
+/*}*/
 
 /*---------style for students page--------*/
 .studentpicker{
@@ -349,7 +393,6 @@ label{
     float: right;
     padding-top: 50px;
 }
-
 /*----------------------pdf viewer page-----------------------*/
 
 .pdfobject-container {
@@ -358,3 +401,4 @@ label{
 .pdfobject {
     border: 1px solid #666;
 }
+

@@ -40,6 +40,7 @@ urlpatterns = [
     url(r'^api/v1/data$', views.data_access_point),
     url(r'^api/v1/quizdata', views.quiz_data),
     url(r'^pdf_view$', views.pdf_view),
+    url(r'^testing$', views.test_page),
 
 
 ]

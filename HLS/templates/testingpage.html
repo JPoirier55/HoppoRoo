@@ -1,0 +1,36 @@
+{% extends "index.html" %}
+{% load range %}
+{% block content %}
+{% csrf_token %}
+
+{% for quiz in quizzes %}
+ <div id="Page{{ quiz.id }}" style="display:none">
+    {{ quiz.quizjson }}
+  </div>
+{% endfor %}
+
+    <input type="button" onclick="show_next()">
+
+    <script>
+        var pages = {{ numpages }};
+        var page = 1;
+        var current;
+        var next;
+        function show_next() {
+            if (page == pages) {
+                page = 1;
+                var temp = "Page" + pages;
+                $('#' + temp).hide();
+                current = "Page" + page;
+                $('#' + current).show();
+            } else {
+                current = "Page" + page;
+                $('#' + current).hide();
+                next = "Page" + (page + 1);
+                $('#' + next).show();
+                page++;
+            }
+        }
+    </script>
+
+{% endblock %}

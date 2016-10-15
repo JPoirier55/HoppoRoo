@@ -4,7 +4,7 @@ from django.shortcuts import HttpResponse
 import utils
 import json
 import datetime
-from models import Quiz, Results
+from models import Quiz, Results, PDFQuiz
 import sys
 import requests
 from django.contrib.auth.decorators import login_required
@@ -13,6 +13,14 @@ from models import Student
 from results import results_metrics
 from quizzes import Quizzes
 
+
+def test_page(request):
+    numpages = 5
+    quizzest = Quiz.objects.all()
+
+
+    return render(request, 'testingpage.html', {'numpages': len(quizzest),
+                                                'quizzes': quizzest})
 
 def auth_view(request):
     username = request.POST.get('Username', '')
@@ -46,10 +54,11 @@ def home(request):
     :param request: request from current page
     :return: rendered template with data
     """
-    quiz_obj = Quizzes(request.META['HTTP_HOST'])
-    chosen_quiz = quiz_obj.get_most_recent_quiz()
-    return render(request, 'home.html', {'recent_quiz': chosen_quiz,
-                                         'quiz_name': chosen_quiz['name']})
+    # quiz_obj = Quizzes(request.META['HTTP_HOST'])
+    # chosen_quiz = quiz_obj.get_most_recent_quiz()
+    return render(request, 'home.html')
+    # , {'recent_quiz': chosen_quiz,
+    #                                      'quiz_name': chosen_quiz['name']})
 
 
 # @login_required(login_url='/login/')
@@ -80,11 +89,11 @@ def load_quiz(request):
         id = request.GET['id']
     else:
         id = 0
-    quiz_obj = Quizzes(request.META['HTTP_HOST'])
+    quiz_objs = Quiz.objects.all()
+    for quiz in quiz_objs:
+        print quiz
 
-    return render(request, 'load_quiz.html', {'chosen_quiz': quiz_obj.json_obj[int(id)],
-                                              'quiz_count': range(len(quiz_obj.json_obj)),
-                                              'quiz_names': quiz_obj.get_quiz_names()})
+    return render(request, 'load_quiz.html', {})
 
 
 # @login_required(login_url='/login/')
@@ -103,6 +112,10 @@ def create_quiz(request):
 
 def build_quiz(request):
     param_dict = request.GET
+    if param_dict['pdf'] == 'true':
+        return render(request, 'build_quiz_pdf.html', {'name': param_dict['name'],
+                                                       'numquestions': int(param_dict['numquestions']),
+                                                       'subject': param_dict['subject']})
     print param_dict
 
     return render(request, 'build_quiz.html', {'name': param_dict['name'],
@@ -114,8 +127,10 @@ def build_quiz(request):
 def help(request):
     return render(request, 'help.html')
 
+
 def pdf_view(request):
     return render(request, 'pdf_view.html')
+
 
 # @login_required(login_url='/login/')
 def results(request):
@@ -175,41 +190,47 @@ def create_quiz_ap(request):
     :param request: request from current page
     :return: redirect back to page while
     """
-    dict = json.dumps(request.POST)
-    json_dict = json.loads(dict)
-    print dict
 
-    # try:
-    #     with open('HLS/templates/quizdata.json', 'r') as f:
-    #         quizjson = json.loads(f.read())
-    #
-    #     newjson = {"id": len(quizjson),
-    #                "name": json_dict['name'][0],
-    #                "date_created": datetime.datetime.now().strftime('%Y-%m-%d'),
-    #                "questions": json_dict['question'],
-    #                "answers": []}
-    #
-    #     for entry_index in range(len(json_dict['question'])):
-    #         tempdict = {"correct": json_dict['correct'][entry_index],
-    #                     "choices": [json_dict['choice_1'][entry_index],
-    #                                 json_dict['choice_2'][entry_index],
-    #                                 json_dict['choice_3'][entry_index],
-    #                                 json_dict['choice_4'][entry_index]]}
-    #         newjson['answers'].append(tempdict)
-    #
-    #     quizjson.append(newjson)
-    #
-    #     quiz_model = Quiz()
-    #     quiz_model.quizjson = json.dumps(newjson)
-    #     quiz_model.save()
-    #
-    #     with open("HLS/templates/quizdata.json", "w") as f:
-    #         json.dump(quizjson, f)
-    # except Exception, e:
-    #     sys.stderr("Cannot do something")
+    post_dict = request.POST
+    get_dict = request.GET
 
-    return HttpResponseRedirect('/create_quiz')
+    question_count = 0
+    quiz_model = None
+
+    question_elements = []
+    for key, value in post_dict.iteritems():
+        if 'question' in key:
+            question_count += 1
+    for i in range(question_count):
+        index = str(i)
+        if get_dict['pdf'] == 'true':
+            quiz_model = PDFQuiz()
+            temp_dict = {'question_num': index,
+                         'correct': post_dict['question'+index]}
+
+        else:
+            quiz_model = Quiz()
+            temp_dict = {'question': post_dict['question'+index],
+                         'correct': post_dict['correct'+index],
+                         'choice1': post_dict['choice1'+index],
+                         'choice2': post_dict['choice2' + index],
+                         'choice3': post_dict['choice3' + index],
+                         'choice4': post_dict['choice4' + index]}
+        question_elements.append(temp_dict)
+
+    quiz_model.quizjson = question_elements
+
+    quiz_model.subject = post_dict['quizsubject']
+    quiz_model.name = post_dict['quizname']
+    quiz_model.save()
+
+    return HttpResponseRedirect('/quizzes/create_quiz')
 
 
 def quiz_data(request):
-    return render(request, 'quizdata.json')
+    quizzes = Quiz.objects.all()
+    quiz_arr = []
+    for quiz in quizzes:
+        quiz_arr.append(quiz.quizjson)
+
+    return HttpResponse(json.dumps(quiz_arr), content_type="application/json")

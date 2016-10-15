@@ -1,48 +1,122 @@
 {% extends "index.html" %}
 {% load range %}
 {% block content %}
-{% csrf_token %}
+
    <div class="page-header">
-        <h1 style="font-size: 7vw;">Build Quiz</h1>
+        <h1 style="font-size: 3vw;">Build Quiz</h1>
+   <p class="build_quiz_info">Please fill out the question, correct answer and the four choices.
+       Make sure all choices are filled out, with one
+    sure answer and the choices are not duplicated. Scroll through each question with
+   next question button, and submit for review with the review quiz button.</p>
     </div>
-
-    <div class="col-md-12">
-        <label id="quizbuildlabel" >Quiz Name: </label>{{ name }}<br>
-        <label id="quizbuildlabel" >Number of questions: </label>{{ numquestions }}<br>
-        <label id="quizbuildlabel" >Subject: </label>{{ subject }}<br>
+    <div id="overallformdiv" style="display: none;">
+        <form action='/api/v1/create_quiz_ap?pdf=false' method='post'>{% csrf_token %}
+            <div id="final_questionform" ></div>
+            <div id="quizformbuttonsubmitfinal" >
+                <button class="submitbut btn btn-primary">Submit</button>
+            </div>
+        </form>
     </div>
-
 
     {% for item in numquestions|get_range %}
-        <div id="Page{{ item }}" class="page" {% if item != 1 %}style="display: none;"{% endif %}>
-            Content of page {{ item }}
+        <div id="Page{{ item }}" class="page" {% if item != 0 %}style="display:none;"{% endif %}>
+             <div id="question_form">
+                <label for='id_question{{ item }}' class="quizformlabel">Question:</label>
+                 <input id='id_question{{ item }}' name='question' type='text' />
+                <label for='id_correct{{ item }}' class="quizformlabel">Correct Answer:</label>
+                 <input id='id_correct{{ item }}' name='correct' type='text' />
+                <label for='id_choice_1{{ item }}' class="quizformlabel">Choice 1:</label>
+                 <input id='id_choice_1{{ item }}' name='choice_1' type='text' />
+                <label for='id_choice_2{{ item }}' class="quizformlabel">Choice 2:</label>
+                 <input id='id_choice_2{{ item }}' name='choice_2' type='text' />
+                <label for='id_choice_3{{ item }}' class="quizformlabel">Choice 3:</label>
+                 <input id='id_choice_3{{ item }}' name='choice_3' type='text' />
+                <label for='id_choice_4{{ item }}' class="quizformlabel">Choice 4:</label>
+                 <input id='id_choice_4{{ item }}' name='choice_4' type='text' />
+             </div>
         </div>
     {% endfor %}
 
-    <input type="button" onclick="show()">
+    <div class="links">
+        <ul class="nav" id="quizformbuttonnext">
+            <li id="blue"><a href="javascript:void(0);" onclick="show_next();">Next Question</a></li>
+        </ul>
+    </div>
+    <div class="links">
+        <ul class="nav" id="quizformbuttonsubmit">
+            <li id="red"><a href="javascript:void(0);" onclick="submit_quiz();">Review Quiz</a></li>
+        </ul>
+    </div>
 
     <script>
-        function show() {
-            var loc = window.location.search;
-            var num_pages = parseInt(loc.split('&')[1].replace('numquestions=',''));
-            var page = parseInt(loc.split('&')[3].replace('page=', ''));
-            page++;
-
-            console.log(page);
-            if(page == num_pages){
+        var pages = {{ numquestions }} -1;
+        var page = 0;
+        var current;
+        var next;
+        function show_next() {
+            if (page == pages) {
                 page = 0;
+                var temp = "Page" + pages;
+                console.log(temp);
+                $('#' + temp).hide();
+                current = "Page" + page;
+                console.log(current);
+                $('#' + current).show();
+            } else {
+                current = "Page" + page;
+                console.log(current);
+                $('#' + current).hide();
+                next = "Page" + (page + 1);
+                console.log(next);
+                $('#' + next).show();
+                page++;
             }
-            var ele = document.getElementById('Page'+page);
-            if (!ele) {
-                alert("no such element");
-                return;
-            }
-            var pages = document.getElementsByClassName('page');
-            for(var i = 0; i < pages.length; i++) {
-                pages[i].style.display = 'none';
-            }
-            ele.style.display = 'block';
         }
+
+        function submit_quiz(){
+            $('.page').hide();
+            $('#quizformbuttonsubmit').hide();
+            $('#quizformbuttonnext').hide();
+            $('#overallformdiv').show();
+            var name = '{{ name }}';
+            var subject = '{{ subject }}';
+            var name_subject = '<br><label for="quizname" class="quizformlabel"><h2>Quiz Name:</h2></label> \
+                 <input id="quizname" type="text" name="quizname" value="'+name+'"/>\
+                 <br><label for="quizsubject" class="quizformlabel"><h2>Quiz Subject:</h2></label> \
+                 <input id="quizsubject" type="text" name="quizsubject" value="'+subject+'"/>';
+            $('#final_questionform').append(name_subject);
+            for(i = 0; i < {{ numquestions }}; i++){
+                var question = $('#id_question'+i).val();
+                var correct = $('#id_correct'+i).val();
+                var choice1 = $('#id_choice_1'+i).val();
+                var choice2 = $('#id_choice_2'+i).val();
+                var choice3 = $('#id_choice_3'+i).val();
+                var choice4 = $('#id_choice_4'+i).val();
+                var new_list = '<br><label for="question'+(i+1)+'" class="quizformlabel"><h2>Question: '+(i+1)+'</h2><br>Name:</label> \
+                 <input id="question'+(i+1)+'" type="text" name="question'+i+'" value="'+question+'"/>\
+                 <label for="correct'+(i+1)+'" class="quizformlabel">Correct:</label> \
+                 <input id="correct'+(i+1)+'" type="text" name="correct'+i+'" value="'+correct+'"/>\
+                 <label for="choice1'+(i+1)+'" class="quizformlabel">Choice 1:</label> \
+                 <input id="choice1'+(i+1)+'" type="text" name="choice1'+i+'" value="'+choice1+'"/>\
+                 <label for="choice2'+(i+1)+'" class="quizformlabel">Choice 2 :</label> \
+                 <input id="choice2'+(i+1)+'" type="text" name="choice2'+i+'" value="'+choice2+'"/>\
+                 <label for="choice3'+(i+1)+'" class="quizformlabel">Choice 3:</label> \
+                 <input id="choice3'+(i+1)+'" type="text" name="choice3'+i+'" value="'+choice3+'"/>\
+                 <label for="choice4'+(i+1)+'" class="quizformlabel">Choice 4:</label> \
+                 <input id="choice4'+(i+1)+'" type="text" name="choice4'+i+'" value="'+choice4+'"/>';
+                $('#final_questionform').append(new_list);
+            }
+        }
+
+         $('.submitbut').click(function(e){
+            if(confirm('Are you sure you want to submit this quiz?')){
+                $('.submitbut').submit();
+            }else{
+                e.stopImmediatePropagation();
+                e.preventDefault();
+            }
+        })
+
     </script>
 
 
