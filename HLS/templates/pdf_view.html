@@ -3,8 +3,23 @@
 {% block content %}
 
 
-
-<div id="example1"></div>
-<script>PDFObject.embed("{% static "res/sample.pdf" %}", "#example1");</script>
+<div id="pdf_div"></div>
+    <div id="choose_pdf" style="margin-bottom: 100px;">
+        <select id="pdf_select">
+            {% for pdf in pdfs %}
+                <option value="{{ pdf.name }}">{{ pdf.name }}</option>
+            {% endfor %}
+        </select>
+        <input type="button" onclick="choosePDF()" value="Submit">
+    </div>
+<script>
+    function choosePDF(){
+        var pdf_name = $('#pdf_select').val();
+        var t = '{% static "res/"%}' + pdf_name;
+        console.log(t);
+        $('#pdf_div').show();
+        PDFObject.embed(t, "#pdf_div");
+    }
+</script>
 
 {% endblock %}

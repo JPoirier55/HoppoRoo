@@ -397,6 +397,7 @@ label{
 
 .pdfobject-container {
     height: 600px;
+    margin-top: 25px;
 }
 .pdfobject {
     border: 1px solid #666;

@@ -39,10 +39,10 @@ urlpatterns = [
     url(r'^api/v1/create_quiz_ap$', views.create_quiz_ap),
     url(r'^api/v1/data$', views.data_access_point),
     url(r'^api/v1/quizdata', views.quiz_data),
+    url(r'^api/v1/upload', views.upload_file),
     url(r'^pdf_view$', views.pdf_view),
+    url(r'^pdf_upload$', views.pdf_upload),
     url(r'^testing$', views.test_page),
-
-
 ]
 
 

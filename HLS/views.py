@@ -1,26 +1,27 @@
 from django.shortcuts import render
 from django.shortcuts import HttpResponseRedirect
 from django.shortcuts import HttpResponse
+from django.http import HttpResponseBadRequest
 import utils
 import json
 import datetime
 from models import Quiz, Results, PDFQuiz
-import sys
+import sys, os
 import requests
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from models import Student
 from results import results_metrics
-from quizzes import Quizzes
+from django.views.decorators.csrf import csrf_exempt
 
 
 def test_page(request):
     numpages = 5
     quizzest = Quiz.objects.all()
 
-
     return render(request, 'testingpage.html', {'numpages': len(quizzest),
                                                 'quizzes': quizzest})
+
 
 def auth_view(request):
     username = request.POST.get('Username', '')
@@ -137,7 +138,18 @@ def help(request):
 
 
 def pdf_view(request):
-    return render(request, 'pdf_view.html')
+    pdfs = []
+    dir = 'C:\\Users\\Jake\\git3\\Hopporoo\\static\\res\\'
+    for pdf in os.listdir(dir):
+        if 'pdf' in pdf:
+            pdf = {'name': pdf,
+                   'dir': dir+pdf}
+            pdfs.append(pdf)
+    return render(request, 'pdf_view.html', {'pdfs': pdfs})
+
+
+def pdf_upload(request):
+    return render(request, 'pdf_upload.html')
 
 
 # @login_required(login_url='/login/')
@@ -174,6 +186,18 @@ def students(request):
 
 
 # ---------------------- API SECTION ----------------- #
+
+@csrf_exempt
+def upload_file(request):
+    if request.method != 'POST':
+        return HttpResponseBadRequest('Only POST requests are allowed')
+    file = request.FILES['myfile']
+    with open('C:\\Users\\Jake\\git3\\Hopporoo\\static\\res\\%s' % file.name, 'wb+') as dest:
+        for chunk in file.chunks():
+            dest.write(chunk)
+    return HttpResponse("file uploaded")
+
+
 def data_access_point(request):
     """
     Point that holds and updates all mat data and consolidates it

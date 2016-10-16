@@ -1,0 +1,17 @@
+{% extends "index.html" %}
+{% load static %}
+{% block content %}
+
+    <div id="fileuploader" style="width: 500px;">Upload</div>
+    <script>
+        $(document).ready(function()
+        {
+            $("#fileuploader").uploadFile({
+            url:"/api/v1/upload",
+            fileName:"myfile"
+            });
+        });
+    </script>
+    <a href="/pdf_view">continue</a>
+
+{% endblock %}
