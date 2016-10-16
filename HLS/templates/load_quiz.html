@@ -1,6 +1,7 @@
 {% extends "index.html" %}
 {% load index %}
 {% block content %}
+    {% load range %}
 
      <div class="page-header">
         <h1 style="font-size: 7vw;">Recent Quizzes</h1>
@@ -12,8 +13,8 @@
                   <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Choose a quiz
                   <span class="caret"></span></button>
                   <ul class="dropdown-menu quiznums">
-                    {% for quiz_id in quiz_count %}
-                        <li><a href="/quizzes/load_quiz?id={{ quiz_id }}">Quiz Name: {{ quiz_names|index:quiz_id }}</a></li>
+                    {% for quiz in qt %}
+                        <li><a href="/quizzes/load_quiz?id={{ quiz.id }}">{{ quiz.name }}</a></li>
                     {% endfor %}
                   </ul>
             </div>

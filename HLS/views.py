@@ -85,15 +85,23 @@ def load_quiz(request):
     :param request: request from current page
     :return: redered template for load quiz page
     """
-    if 'id' in request.GET:
-        id = request.GET['id']
-    else:
-        id = 0
-    quiz_objs = Quiz.objects.all()
-    for quiz in quiz_objs:
-        print quiz
 
-    return render(request, 'load_quiz.html', {})
+    id = request.GET.get('id', 1)
+    quiz_names = []
+    quiz_ids = []
+    qt = []
+    quizzes = Quiz.objects.all()
+    for quiz in quizzes:
+        quiz_names.append(quiz.name)
+        quiz_ids.append(quiz.id)
+        qt.append(quiz)
+    quiz_obj = json.loads(Quiz.objects.get(id=id).quizjson)
+    print quiz_obj
+
+    return render(request, 'load_quiz.html', {'chosen_quiz': quiz_obj,
+                                              'quiz_ids': quiz_ids,
+                                              'quiz_names': quiz_names,
+                                              'qt': qt})
 
 
 # @login_required(login_url='/login/')
@@ -196,30 +204,39 @@ def create_quiz_ap(request):
 
     question_count = 0
     quiz_model = None
-
+    questions = []
     question_elements = []
+    question_json = {}
     for key, value in post_dict.iteritems():
         if 'question' in key:
             question_count += 1
-    for i in range(question_count):
-        index = str(i)
-        if get_dict['pdf'] == 'true':
+    if get_dict['pdf'] == 'true':
+        for i in range(question_count):
+            index = str(i)
             quiz_model = PDFQuiz()
+            questions.append(post_dict['question' + index])
             temp_dict = {'question_num': index,
                          'correct': post_dict['question'+index]}
+            question_elements.append(temp_dict)
 
-        else:
+    else:
+        for i in range(question_count):
+            index = str(i)
             quiz_model = Quiz()
-            temp_dict = {'question': post_dict['question'+index],
-                         'correct': post_dict['correct'+index],
-                         'choice1': post_dict['choice1'+index],
-                         'choice2': post_dict['choice2' + index],
-                         'choice3': post_dict['choice3' + index],
-                         'choice4': post_dict['choice4' + index]}
-        question_elements.append(temp_dict)
+            questions.append(post_dict['question'+index])
+            temp_dict = {'correct': post_dict['correct'+index],
+                         'choices': [post_dict['choice1'+index],
+                                     post_dict['choice2' + index],
+                                     post_dict['choice3' + index],
+                                     post_dict['choice4' + index]]}
+            question_elements.append(temp_dict)
+    date = datetime.datetime.now()
+    question_json = {'answers': question_elements,
+                     'questions': questions,
+                     'date_created': date.strftime("%Y-%m-%d"),
+                     'name': post_dict['quizname']}
 
-    quiz_model.quizjson = question_elements
-
+    quiz_model.quizjson = json.dumps(question_json)
     quiz_model.subject = post_dict['quizsubject']
     quiz_model.name = post_dict['quizname']
     quiz_model.save()
