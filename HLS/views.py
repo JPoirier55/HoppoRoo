@@ -139,7 +139,7 @@ def help(request):
 
 def pdf_view(request):
     pdfs = []
-    dir = '/home/ubuntu/HoppoRoo/HoppoRoo/static/res/'
+    dir = 'C:\\Users\\Jake\\git3\\HoppoRoo\\static\\res\\'
     for pdf in os.listdir(dir):
         if 'pdf' in pdf:
             pdf = {'name': pdf,
@@ -149,7 +149,14 @@ def pdf_view(request):
 
 
 def pdf_upload(request):
-    return render(request, 'pdf_upload.html')
+    pdfs = []
+    dir = 'C:\\Users\\Jake\\git3\\HoppoRoo\\static\\res\\'
+    for pdf in os.listdir(dir):
+        if 'pdf' in pdf:
+            pdf = {'name': pdf,
+                   'dir': dir + pdf}
+            pdfs.append(pdf)
+    return render(request, 'pdf_upload.html', {'pdfs': pdfs})
 
 
 # @login_required(login_url='/login/')
@@ -192,10 +199,19 @@ def upload_file(request):
     if request.method != 'POST':
         return HttpResponseBadRequest('Only POST requests are allowed')
     file = request.FILES['myfile']
-    with open('/home/ubuntu/HoppoRoo/HoppoRoo/static/res/%s' % file.name, 'wb+') as dest:
+    with open('C:\\Users\\Jake\\git3\\HoppoRoo\\static\\res\\%s' % file.name, 'wb+') as dest:
         for chunk in file.chunks():
             dest.write(chunk)
     return HttpResponse("file uploaded")
+
+
+def delete_file(request):
+    filename = request.GET.get('filename')
+    try:
+        os.remove(filename)
+        return HttpResponseRedirect("/pdf_upload")
+    except IOError as e:
+        return HttpResponseBadRequest('PDF DELETE ERROR:{0}'.format(e.strerror))
 
 
 def data_access_point(request):

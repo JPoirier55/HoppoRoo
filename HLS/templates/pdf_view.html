@@ -2,24 +2,49 @@
 {% load static %}
 {% block content %}
 
-
 <div id="pdf_div"></div>
     <div id="choose_pdf" style="margin-bottom: 100px;">
         <select id="pdf_select">
             {% for pdf in pdfs %}
-                <option value="{{ pdf.name }}">{{ pdf.name }}</option>
+                <option value="{{ pdf.name }}" selected>{{ pdf.name }}</option>
             {% endfor %}
         </select>
-        <input type="button" onclick="choosePDF()" value="Submit">
+{#        <input id="change_pdf_button" type="button" onclick="choosePDF()" value="Submit">#}
+    <input id="full_screen_button" type="button" value="Fullscreen">
     </div>
-<script>
+    <script>
+    $(document).ready(function(){
+       choosePDF();
+    });
+    $('#pdf_select').on('change', function(){
+        choosePDF();
+    });
+
     function choosePDF(){
         var pdf_name = $('#pdf_select').val();
-        var t = '{% static "res/"%}' + pdf_name;
-        console.log(t);
-        $('#pdf_div').show();
-        PDFObject.embed(t, "#pdf_div");
+        console.log(pdf_name);
+        if(pdf_name){
+            var t = '{% static "res/"%}' + pdf_name;
+            console.log(t);
+            $('#pdf_div').show();
+             var options = {
+                pdfOpenParams: {
+                    navpanes: 0,
+                    toolbar: 0,
+                    statusbar: 0,
+                    view: "FitV"
+                }
+            };
+            PDFObject.embed(t, "#pdf_div", options);
+        }
     }
+    $('#full_screen_button').on('click', function(){
+        var pdf_name = $('#pdf_select').val();
+        if(pdf_name){
+        var t = '{% static "res/"%}' + pdf_name;
+            location.href = t;
+        }
+    });
 </script>
 
 {% endblock %}
