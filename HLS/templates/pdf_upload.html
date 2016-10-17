@@ -1,8 +1,12 @@
 {% extends "index.html" %}
 {% load static %}
 {% block content %}
-
-    <div id="fileuploader" style="width: 500px;">Upload</div>
+    <div class="page-header">
+        <h1 style="font-size: 3vw;">PDF Quiz Upload</h1>
+       <p class="info">Use this tool to upload a PDF quiz document for use in the
+           PDF viewer page, or use an existing PDF quiz that has previously been uploaded.</p>
+    </div>
+    <div id="fileuploader">Upload</div>
     <script>
         $(document).ready(function()
         {
@@ -12,6 +16,29 @@
             });
         });
     </script>
-    <a href="/pdf_view">continue</a>
+    <div class="links">
+       <ul class="nav">
+            <a id="green" href="/pdf_view">Continue</a>
+       </ul>
+    </div>
+    <input id="pdf_view_page_button" type="button" onclick="location.href='/pdf_view'" value="Continue">
+    <div class="common_back" align="center">
+       <table id="filetable">
+       <col/>
+       <col width="15%"/>
+       <tr><th colspan="2">Existing Files on System</th>
+        </tr>
+        <tr><th>Filename</th>
+            <th id="delete_col">Delete</th>
+        </tr>
+
+        {% for file in pdfs %}
+        <tr>
+            <td>{{ file.name }}</td>
+            <td><a href="/api/v1/delete?filename={{ file.dir }}">X</a> </td>
+        </tr>
+        {% endfor %}
+        </table>
+    </div>
 
 {% endblock %}
