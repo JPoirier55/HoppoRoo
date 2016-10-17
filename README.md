@@ -13,7 +13,7 @@ $ python manage.py makemigrations
 $ python manage.py migrate
 $ python manage.py runserver <dest ip add>:<dest port>
 ``` 
-Go to http://<dest ip add>:<dest port> to see running sandbox instance.
+Go to http://dest_ip:dest_port to see running sandbox instance.
 
 Currently I am hosting an AWS cloud server with the app running here:
 ## http://hopporoo.jakepoirierdev.com
