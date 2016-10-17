@@ -139,7 +139,7 @@ def help(request):
 
 def pdf_view(request):
     pdfs = []
-    dir = 'C:\\Users\\Jake\\git3\\HoppoRoo\\static\\res\\'
+    dir = '/home/ubuntu/HoppoRoo/HoppoRoo/static/res/'
     for pdf in os.listdir(dir):
         if 'pdf' in pdf:
             pdf = {'name': pdf,
@@ -150,7 +150,7 @@ def pdf_view(request):
 
 def pdf_upload(request):
     pdfs = []
-    dir = 'C:\\Users\\Jake\\git3\\HoppoRoo\\static\\res\\'
+    dir = '/home/ubuntu/HoppoRoo/HoppoRoo/static/res/'
     for pdf in os.listdir(dir):
         if 'pdf' in pdf:
             pdf = {'name': pdf,
@@ -199,7 +199,7 @@ def upload_file(request):
     if request.method != 'POST':
         return HttpResponseBadRequest('Only POST requests are allowed')
     file = request.FILES['myfile']
-    with open('C:\\Users\\Jake\\git3\\HoppoRoo\\static\\res\\%s' % file.name, 'wb+') as dest:
+    with open('/home/ubuntu/HoppoRoo/HoppoRoo/static/res/%s' % file.name, 'wb+') as dest:
         for chunk in file.chunks():
             dest.write(chunk)
     return HttpResponse("file uploaded")
