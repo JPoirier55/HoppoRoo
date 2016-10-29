@@ -202,7 +202,7 @@ def upload_file(request):
         return HttpResponseBadRequest('Only POST requests are allowed')
     file = request.FILES['myfile']
     dir = '/home/pi/HoppoRoo/HoppoRoo/static/res/'
-    #dir = 'C:\\Users\\Jake\\git3\\HoppoRoo\\static\\res\\'
+    # dir = 'C:\\Users\\Jake\\git3\\HoppoRoo\\static\\res\\'
     with open(dir+'%s' % file.name, 'wb+') as dest:
         for chunk in file.chunks():
             dest.write(chunk)
