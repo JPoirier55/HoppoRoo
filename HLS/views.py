@@ -10,6 +10,7 @@
 import os
 import json
 import datetime
+import requests
 from models import Quiz, Results, PDFQuiz, Student
 from django.shortcuts import render, HttpResponseRedirect, HttpResponse
 from django.http import HttpResponseBadRequest
@@ -17,8 +18,6 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login, logout
 from results import results_metrics
 from scripts import set_ip_adds
-
-IP_ARRAY = []
 
 
 def test_page(request):
@@ -89,9 +88,7 @@ def quiz_view(request):
     :return: rendered quiz view page
     """
     set_ip_adds.run_nmap()
-    ip_arr = set_ip_adds.parse_nmap()
-    print ip_arr
-    IP_ARRAY = ip_arr
+
     return render(request, 'quiz_view_1.html', {})
 
 
@@ -267,17 +264,17 @@ def data_access_point(request):
     :param request: request from current page
     :return: response object with json data
     """
-
-    # response_data = json.loads(requests.get("http://192.168.42.19:8080").text)
+    ip_arr = set_ip_adds.parse_nmap()
+    response_data = {}
+    for ip in ip_arr:
+        response_data = json.loads(requests.get("http://{0}:8080".format(ip)).text)
     # response_data3 = json.loads(requests.get("http://192.168.42.18:8080").text)
     #
-    # output_json = {'A': int(response_data['buttonA'])+int(response_data3['buttonA']),
-    #                'B': int(response_data['buttonB'])+int(response_data3['buttonB']),
-    #                'C': int(response_data['buttonC'])+int(response_data3['buttonC']),
-    #                'D': int(response_data['buttonD'])+int(response_data3['buttonD'])}
+    output_json = {'A': int(response_data['buttonA']),
+                   'B': int(response_data['buttonB']),
+                   'C': int(response_data['buttonC']),
+                   'D': int(response_data['buttonD'])}
 
-
-    output_json = {'ip': IP_ARRAY}
     return HttpResponse(json.dumps(output_json))
 
 
