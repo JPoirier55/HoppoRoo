@@ -14,8 +14,8 @@ def run_nmap():
 
 
 def parse_nmap():
-    #dir = "/home/pi/HoppoRoo/HoppoRoo/scripts/iplist.txt"
-    dir = 'C:\\Users\\Jake\\git3\\HoppoRoo\\scripts\\iplist.txt'
+    dir = "/home/pi/HoppoRoo/HoppoRoo/scripts/iplist.txt"
+    #dir = 'C:\\Users\\Jake\\git3\\HoppoRoo\\scripts\\iplist.txt'
     with open(dir, 'r') as nmap_file:
         nmap_contents = nmap_file.readlines()
 
