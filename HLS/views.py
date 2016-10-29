@@ -18,6 +18,8 @@ from django.contrib.auth import authenticate, login, logout
 from results import results_metrics
 from scripts import set_ip_adds
 
+IP_ARRAY = []
+
 
 def test_page(request):
     numpages = 5
@@ -86,7 +88,10 @@ def quiz_view(request):
     :param request: wsgi request
     :return: rendered quiz view page
     """
-    set_ip_adds.parse_nmap()
+    set_ip_adds.run_nmap()
+    ip_arr = set_ip_adds.parse_nmap()
+    print ip_arr
+    IP_ARRAY = ip_arr
     return render(request, 'quiz_view_1.html', {})
 
 
@@ -271,7 +276,8 @@ def data_access_point(request):
     #                'C': int(response_data['buttonC'])+int(response_data3['buttonC']),
     #                'D': int(response_data['buttonD'])+int(response_data3['buttonD'])}
 
-    output_json = {}
+
+    output_json = {'ip': IP_ARRAY}
     return HttpResponse(json.dumps(output_json))
 
 
