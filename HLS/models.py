@@ -1,9 +1,19 @@
+"""
+    Entire HLS models classes
+
+    Author: Jake Poirier
+    Date 2/15/16
+"""
+
 from __future__ import unicode_literals
 
 from django.db import models
 
 
 class Quiz(models.Model):
+    """
+        Quiz model table with subjects and pk id
+    """
     id = models.IntegerField(primary_key=True)
     quizjson = models.TextField(null=True)
     name = models.CharField(max_length=256, default='')
@@ -24,6 +34,9 @@ class Quiz(models.Model):
 
 
 class PDFQuiz(models.Model):
+    """
+        PDf quiz table with subjects and pk id
+    """
     id = models.IntegerField(primary_key=True)
     quizjson = models.TextField(null=True)
     name = models.CharField(max_length=256, default='')
@@ -44,6 +57,9 @@ class PDFQuiz(models.Model):
 
 
 class Student(models.Model):
+    """
+        Student table with name and pk id
+    """
     name = models.CharField(max_length=256, default='')
     id = models.IntegerField(primary_key=True)
 
@@ -52,6 +68,9 @@ class Student(models.Model):
 
 
 class Device(models.Model):
+    """
+        Device table with one to one student and pk id
+    """
     id = models.IntegerField(primary_key=True, default=None)
     student = models.OneToOneField(Student)
 
@@ -60,6 +79,9 @@ class Device(models.Model):
 
 
 class Results(models.Model):
+    """
+        Results table with unique student and quiz fks, and score
+    """
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
     student = models.ForeignKey(Student)
     score = models.IntegerField(default=0)

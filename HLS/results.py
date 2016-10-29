@@ -1,9 +1,21 @@
+"""
+    Results aggregator module which compiles all results for
+    each student. Shows all data on results page on app
+
+    Author: Jake Poirier
+    Date: 8/12/16
+"""
+
 from models import Quiz, Results
 import utils
 import json
 
 
 def results_metrics():
+    """
+    Aggregator for all student results data
+    :return: dictionary for all student data
+    """
     quizzes = Quiz.objects.all()
     metrics = {}
     for quiz in quizzes:
