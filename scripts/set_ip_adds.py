@@ -14,7 +14,9 @@ def run_nmap():
 
 
 def parse_nmap():
-    with open("iplist.txt", 'r') as nmap_file:
+    dir = "/home/pi/HoppoRoo/HoppoRoo/scripts/iplist.txt"
+    #dir = 'C:\\Users\\Jake\\git3\\HoppoRoo\\scripts\\iplist.txt'
+    with open(dir, 'r') as nmap_file:
         nmap_contents = nmap_file.readlines()
 
     start_index = nmap_contents.index("Nmap scan report for 192.168.42.1\n")
