@@ -88,7 +88,6 @@ def quiz_view(request):
     :return: rendered quiz view page
     """
     set_ip_adds.run_nmap()
-
     return render(request, 'quiz_view_1.html', {})
 
 
@@ -237,6 +236,11 @@ def students(request):
 
 @csrf_exempt
 def upload_file(request):
+    """
+    API method to upload file from pdf upload page
+    :param request: wsgi request
+    :return: response for upload
+    """
     if request.method != 'POST':
         return HttpResponseBadRequest('Only POST requests are allowed')
     file = request.FILES['myfile']
@@ -249,6 +253,11 @@ def upload_file(request):
 
 
 def delete_file(request):
+    """
+    API method to delete files from pdf view page
+    :param request: wsgi request
+    :return: response for delete
+    """
     filename = request.GET.get('filename')
     try:
         os.remove(filename)
@@ -266,14 +275,24 @@ def data_access_point(request):
     """
     ip_arr = set_ip_adds.parse_nmap()
     response_data = {}
+    a = 0
+    b = 0
+    c = 0
+    d = 0
     for ip in ip_arr:
-        response_data = json.loads(requests.get("http://{0}:8080".format(ip)).text)
-    # response_data3 = json.loads(requests.get("http://192.168.42.18:8080").text)
-    #
-    output_json = {'A': int(response_data['buttonA']),
-                   'B': int(response_data['buttonB']),
-                   'C': int(response_data['buttonC']),
-                   'D': int(response_data['buttonD'])}
+        try:
+            response_data = json.loads(requests.get("http://{0}:8080".format(ip)).text)
+            a += int(response_data['buttonA'])
+            b += int(response_data['buttonB'])
+            c += int(response_data['buttonC'])
+            d += int(response_data['buttonD'])
+        except requests.RequestException:
+            return HttpResponse({})
+        
+    output_json = {'A': a,
+                   'B': b,
+                   'C': c,
+                   'D': d}
 
     return HttpResponse(json.dumps(output_json))
 
