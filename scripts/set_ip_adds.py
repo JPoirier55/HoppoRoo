@@ -14,6 +14,11 @@ def run_nmap():
 
 
 def parse_nmap():
+    """
+    Script to parse output of nmap and find ip addresses
+    of mats that are connected
+    :return: list of ip addresses connected
+    """
     dir = "/home/pi/HoppoRoo/HoppoRoo/scripts/iplist.txt"
     #dir = 'C:\\Users\\Jake\\git3\\HoppoRoo\\scripts\\iplist.txt'
     with open(dir, 'r') as nmap_file:
@@ -28,7 +33,6 @@ def parse_nmap():
 
     esp_arr = []
     for device_index in range(len(iparr)):
-        print device_index
         if device_index < len(iparr) - 1:
             if "5C:CF:7F" in iparr[device_index+1]:
                 esp_arr.append(iparr[device_index])
