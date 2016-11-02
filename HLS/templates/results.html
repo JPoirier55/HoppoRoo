@@ -6,6 +6,14 @@
      <div class="page-header">
         <h1 style="font-size: 7vw;">Results</h1>
     </div>
+    <script>
+
+    for(var i =0; i< localStorage.length; i++){
+        console.log(localStorage.getItem(i));
+    }
+    console.log(JSON.parse(localStorage.getItem('1')));
+
+    </script>
 
 {#    <div class="studentpicker" >#}
 {#       <select id="studentpickerbox" onchange="location = this.value;">#}
@@ -14,36 +22,36 @@
 {#            {% endfor %}#}
 {#        </select>#}
 {#    </div>#}
-    <div class="col-md-12">
-        <div class="table-responsive" style="margin-bottom: 100px;">
-            <table id="resultstable">
-                <tr>
-                    <th>Quiz</th>
-                    <th>Average</th>
-                    <th>Median</th>
-                    <th>Std. Deviation</th>
-                    <th>High</th>
-                    <th>Low</th>
-                    <th>No. of Questions</th>
-                    <th>Subject</th>
-                </tr>
-
-                {% for key, values in results_list.items %}
-
-                    <tr>
-                        <td>{{ values.name }}</td>
-                        <td>{{ values.class_av }}</td>
-                        <td>{{ values.class_median }}</td>
-                        <td>{{ values.std_dev }}</td>
-                        <td>{{ values.high }}</td>
-                        <td>{{ values.low }}</td>
-                        <td>{{ values.num_of_questions }}</td>
-                        <td>{{ values.subject }}</td>
-                    </tr>
-
-                {% endfor %}
-
-            </table>
-        </div>
-    </div>
+{#    <div class="col-md-12">#}
+{#        <div class="table-responsive" style="margin-bottom: 100px;">#}
+{#            <table id="resultstable">#}
+{#                <tr>#}
+{#                    <th>Quiz</th>#}
+{#                    <th>Average</th>#}
+{#                    <th>Median</th>#}
+{#                    <th>Std. Deviation</th>#}
+{#                    <th>High</th>#}
+{#                    <th>Low</th>#}
+{#                    <th>No. of Questions</th>#}
+{#                    <th>Subject</th>#}
+{#                </tr>#}
+{##}
+{#                {% for key, values in results_list.items %}#}
+{##}
+{#                    <tr>#}
+{#                        <td>{{ values.name }}</td>#}
+{#                        <td>{{ values.class_av }}</td>#}
+{#                        <td>{{ values.class_median }}</td>#}
+{#                        <td>{{ values.std_dev }}</td>#}
+{#                        <td>{{ values.high }}</td>#}
+{#                        <td>{{ values.low }}</td>#}
+{#                        <td>{{ values.num_of_questions }}</td>#}
+{#                        <td>{{ values.subject }}</td>#}
+{#                    </tr>#}
+{##}
+{#                {% endfor %}#}
+{##}
+{#            </table>#}
+{#        </div>#}
+{#    </div>#}
 {% endblock %}

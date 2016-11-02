@@ -1,52 +1,75 @@
 {% extends "index.html" %}
 {% load static %}
 {% block content %}
-	<div id="questions" class="col-md-12" style="visibility: hidden;">
+    <div id="questions" class="col-md-12" style="visibility: hidden;">
         <div class="col-md-6" id="questions_div">
             <span id="question_heading"></span>
         </div>
         <div class="col-md-6" id="container"></div>
         <div class="choice col-md-6">
-                    A: <span id="choice_a"></span><br>
-                    B: <span id="choice_b"></span><br>
-                    C: <span id="choice_c"></span><br>
-                    D: <span id="choice_d"></span><br>
+            A: <span id="choice_a"></span><br>
+            B: <span id="choice_b"></span><br>
+            C: <span id="choice_c"></span><br>
+            D: <span id="choice_d"></span><br>
             <div id="correctdiv" style="visibility: hidden; background-color: #932933; color:white; text-align: center;">
-            Correct Answer: <span id="correct" ></span>
-        </div>
+                Correct Answer: <span id="correct" ></span>
+            </div>
         </div>
 
-	</div>
+    </div>
 
     <div id='quizbuttondiv' class="col-md-12">
         <div id="startquizbutton">
-            <button class="btn btn-primary btn-lg" onclick="graph()" >Start Quiz!</button>
+            <button class="btn btn-primary btn-lg" onclick="start_polling();chart();" >Start Quiz!</button>
+            <button class="btn btn-primary btn-lg" onclick="stop_polling()" >Stop Quiz!</button>
         </div>
     </div>
+    <script>
+        function start_polling(){
+            interval = setInterval(function () {
+                $.when(
+                        $.ajax({
+                            type: "GET",
+                            url: "api/v1/data",
+                            success: function (response) {
+                                console.log(JSON.parse(response));
+                                response_json = JSON.parse(response);
+                            }
+                        }).then(function() {
+                            localStorage.setItem("overall", JSON.stringify(response_json));
+{#                            var j = response_json['node_data'];#}
+{#                            for(var i = 0; i< Object.keys(j).length; i++){#}
+{#                                localStorage.setItem(j[i]['id'], JSON.stringify(j[i]));#}
+{#                            }#}
+                        }))
+            }, 1000);}
+    </script>
+
 
     <script src="{%  static "js/highcharts.js" %}"></script>
     <script src="{% static "js/exporting.js" %}"></script>
 
     <script>
-	    var index = 0;
+
+        var index = 0;
         var json_global = '';
         $.getJSON("static/js/trivia.json", function(json) {
-                json_global = json;
-			    console.log(json[index]);
+            json_global = json;
+            console.log(json[index]);
 
-            });
-		function nextquestion(){
+        });
+        function nextquestion(){
             $('#quest_button').attr('onclick', 'showCorrect()').html('Show Answer!');
             $('#correctdiv').css('visibility', 'hidden');
             $('#question_heading').html(json_global[index]['question']);
-                $('#choice_a').html(json_global[index]['choices'][0]);
-                $('#choice_b').html(json_global[index]['choices'][1]);
-                $('#choice_c').html(json_global[index]['choices'][2]);
-                $('#choice_d').html(json_global[index]['choices'][3]);
+            $('#choice_a').html(json_global[index]['choices'][0]);
+            $('#choice_b').html(json_global[index]['choices'][1]);
+            $('#choice_c').html(json_global[index]['choices'][2]);
+            $('#choice_d').html(json_global[index]['choices'][3]);
         }
 
         function showCorrect(){
-            $('#correctdiv').css('visibility', 'visible')
+            $('#correctdiv').css('visibility', 'visible');
             $('#correct').html(json_global[index]['correct']);
             $('#quest_button').attr('onclick', 'nextquestion()').html('Next Question!');
             index++;
@@ -54,6 +77,8 @@
                 index = 0;
             }
         }
+
+
 
         function graph() {
             $('.linkssmall').before('<div class="col-md-12" style="text-align: center;"> \
@@ -65,138 +90,124 @@
             $('#nextquestionbutton').css('visibility', 'visible');
             $('#quizbuttondiv').css('visibility', 'hidden');
             nextquestion();
-			}
+        }
 
-		$(function () {
+        function chart() {
+            interval;
+            $('#questions').css('visibility', 'visible');
+
+            Highcharts.setOptions({
+                global: {
+                    useUTC: false
+                },
+                plotOptions: {
+                    column: {
+                        colorByPoint: true
+                    }
+                },
+                colors: [
+                    '#932933',
+                    '#00ED77',
+                    '#2E3B7F',
+                    '#FCF528'
+                ]
+            });
+
+            $('#container').highcharts({
+                chart: {
+                    type: 'column',
+                    animation: Highcharts.svg, // don't animate in old IE
+                    marginRight: 100,
+                    backgroundColor: '#F7F7CD',
+                    events: {
+                        load: function () {
+
+                            // set up the updating of the chart each second
+                            var series = this.series[0];
+                            var response_json;
+                            interval2 = setInterval(function () {
+                                            var response_json = JSON.parse(localStorage.getItem("overall"));
+                                            console.log(response_json);
+                                            series.setData([response_json['A'] , response_json['B'], response_json['C'], response_json['D']], true, false, true);
+
+{#                                            var j = response_json['node_data'];#}
+{#                                            for(var i = 0; i< Object.keys(j).length; i++){#}
+{#                                                localStorage.setItem(j[i]['id'], JSON.stringify(j[i]));#}
+{#                                            }#}
 
 
-                Highcharts.setOptions({
-                    global: {
-                        useUTC: false
-                    },
-                    plotOptions: {
-                        column: {
-                            colorByPoint: true
+
+                            }, 1000);
                         }
-                    },
-                    colors: [
-                        '#932933',
-                        '#00ED77',
-                        '#2E3B7F',
-                        '#FCF528'
-                    ]
-                });
+                    }
+                },
 
-                $('#container').highcharts({
-                    chart: {
-                        type: 'column',
-                        animation: Highcharts.svg, // don't animate in old IE
-                        marginRight: 100,
-                        backgroundColor: '#F7F7CD',
-                        events: {
-                            load: function () {
-
-                                // set up the updating of the chart each second
-                                var series = this.series[0];
-                                var response_json;
-                                setInterval(function () {
-{#                                    var jText = '{ "A":' + (Math.floor(Math.random() * (20 - 0 + 1)) + 0) + ',' +#}
-{#                                            '"B":' + (Math.floor(Math.random() * (20 - 0 + 1)) + 0) + ',' +#}
-{#                                            '"C":' + (Math.floor(Math.random() * (20 - 0 + 1)) + 0) + ',' +#}
-{#                                            '"D":' + (Math.floor(Math.random() * (20 - 0 + 1)) + 0) +'}';#}
-{##}
-{#                                    var jObj = JSON.parse(jText);#}
-{#                                    console.log(jObj);#}
-{#                                    var A_Answers = 0;#}
-{#                                    var B_Answers = 0;#}
-{#                                    var C_Answers = 0;#}
-{#                                    var D_Answers = 0;#}
-{#                                    $.each( jObj, function( key, val ) {#}
-{#                                        if(key=="A")A_Answers=parseInt(val);#}
-{#                                        if(key=="B")B_Answers=parseInt(val);#}
-{#                                        if(key=="C")C_Answers=parseInt(val);#}
-{#                                        if(key=="D")D_Answers=parseInt(val);#}
-{#                                    });#}
-{##}
-{#                                    series.setData([A_Answers, B_Answers,C_Answers,D_Answers],true,false,true);#}
-                                  $.when(
-                                   $.ajax({
-                                      type: "GET",
-                                       url: "api/v1/data",
-                                       success: function (response) {
-                                         console.log(JSON.parse(response));
-                                         response_json = JSON.parse(response);
-                                        }
-                                     }).then(function() {
-                                        series.setData([response_json['A'] , response_json['B'], response_json['C'], response_json['D']], true, false, true);
-                                    }))
-
-
-                                }, 200);
-                            }
-                        }
-                    },
-
-                    title: {
-                        text: '',
+                title: {
+                    text: '',
+                    style:{
+                        color: '#437341',
+                        fontSize: '25px',
+                        fontFamily: "teacher"
+                    }
+                },
+                xAxis: {
+                    labels: {
                         style:{
+                            color: '#932933',
+                            fontSize: '25px',
+                            fontFamily: "teacher"
+                        }
+                    },
+                    categories: [
+                        'A',
+                        'B',
+                        'C',
+                        'D',
+                    ],
+                },
+                yAxis: {
+                    title: {
+                        style:{
+                            color: '#932933',
+                            fontSize: '25px',
+                            fontFamily: "teacher"
+                        },
+                        text: ''
+                    },
+                    labels: {
+                        style: {
                             color: '#437341',
                             fontSize: '25px',
                             fontFamily: "teacher"
                         }
                     },
-                    xAxis: {
-                        labels: {
-                            style:{
-                                color: '#932933',
-                                fontSize: '25px',
-                                fontFamily: "teacher"
-                            }
-                        },
-                        categories: [
-                            'A',
-                            'B',
-                            'C',
-                            'D',
-                        ],
-                    },
-                    yAxis: {
-                        title: {
-                            style:{
-                                color: '#932933',
-                                fontSize: '25px',
-                                fontFamily: "teacher"
-                            },
-                            text: ''
-                        },
-						labels: {
-							style: {
-								color: '#437341',
-                                fontSize: '25px',
-                                fontFamily: "teacher"
-							}
-						},
-                        allowDecimals: false,
-                        plotLines: [{
-                            value: 0,
-                            width: 1,
-                            color: '#808080'
-                        }]
-                    },
-
-                    legend: {
-                        enabled: false
-                    },
-                    exporting: {
-                        enabled: false
-                    },
-                    series: [{
-                        name: 'Choices',
-                        data: []
-
+                    allowDecimals: false,
+                    plotLines: [{
+                        value: 0,
+                        width: 1,
+                        color: '#808080'
                     }]
-                });
-            })	
-		
+                },
+
+                legend: {
+                    enabled: false
+                },
+                exporting: {
+                    enabled: false
+                },
+                series: [{
+                    name: 'Choices',
+                    data: []
+
+                }]
+            });
+        }
+
+    </script>
+    <script>
+        function stop_polling(){
+            clearInterval(interval);
+            clearInterval(interval2);
+        }
     </script>
 {% endblock %}
