@@ -279,6 +279,7 @@ def data_access_point(request):
     b = 0
     c = 0
     d = 0
+    nodes = {}
     for ip in ip_arr:
         try:
             response_data = json.loads(requests.get("http://{0}:8080".format(ip)).text)
@@ -286,13 +287,16 @@ def data_access_point(request):
             b += int(response_data['buttonB'])
             c += int(response_data['buttonC'])
             d += int(response_data['buttonD'])
-        except requests.RequestException:
-            return HttpResponse({})
+	    
+            nodes[response_data['id']] = response_data
+	except requests.RequestException:
+            return HttpResponse(json.dumps({}))
         
     output_json = {'A': a,
                    'B': b,
                    'C': c,
-                   'D': d}
+                   'D': d,
+		   'node_data': nodes}
 
     return HttpResponse(json.dumps(output_json))
 
