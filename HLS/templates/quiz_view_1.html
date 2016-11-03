@@ -56,7 +56,6 @@
         $.getJSON("static/js/trivia.json", function(json) {
             json_global = json;
             console.log(json[index]);
-
         });
         function nextquestion(){
             $('#quest_button').attr('onclick', 'showCorrect()').html('Show Answer!');
@@ -77,8 +76,6 @@
                 index = 0;
             }
         }
-
-
 
         function graph() {
             $('.linkssmall').before('<div class="col-md-12" style="text-align: center;"> \
