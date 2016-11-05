@@ -79,6 +79,14 @@ def quizzes_home(request):
     return render(request, 'quizzes_home.html')
 
 
+def choose_quiz(request):
+    quizzes = Quiz.objects.all()
+    quiz_names = []
+    for quiz in quizzes:
+        quiz_names.append(quiz.name)
+    return render(request, 'choose_quiz.html', {'quiz_names': quiz_names})
+
+
 # @login_required(login_url='/login/')
 def quiz_view(request):
     """
@@ -88,7 +96,9 @@ def quiz_view(request):
     :return: rendered quiz view page
     """
     # set_ip_adds.run_nmap()
-    return render(request, 'quiz_view_1.html', {})
+    selected_quiz = request.GET.get('quizname')
+
+    return render(request, 'quiz_view_1.html', {'quizname': selected_quiz})
 
 
 # @login_required(login_url='/login/')
@@ -266,6 +276,20 @@ def delete_file(request):
         return HttpResponseBadRequest('PDF DELETE ERROR:{0}'.format(e.strerror))
 
 
+def serve_quiz(request):
+    quizzes = Quiz.objects.all()
+    quiz_json = []
+    for quiz in quizzes:
+        quiz_json.append(quiz.quizjson)
+    return HttpResponse(json.dumps(quiz_json))
+
+@csrf_exempt
+def result_post_point(request):
+    post_dict = request.POST
+    print post_dict
+    return HttpResponse("success")
+
+
 def data_access_point(request):
     """
     Point that holds and updates all mat data and consolidates it
@@ -322,10 +346,11 @@ def create_quiz_ap(request):
     quiz_model = None
     questions = []
     question_elements = []
-    question_json = {}
+
     for key, value in post_dict.iteritems():
         if 'question' in key:
             question_count += 1
+
     if get_dict['pdf'] == 'true':
         for i in range(question_count):
             index = str(i)
@@ -334,7 +359,6 @@ def create_quiz_ap(request):
             temp_dict = {'question_num': index,
                          'correct': post_dict['question'+index]}
             question_elements.append(temp_dict)
-
     else:
         for i in range(question_count):
             index = str(i)
@@ -346,6 +370,7 @@ def create_quiz_ap(request):
                                      post_dict['choice3' + index],
                                      post_dict['choice4' + index]]}
             question_elements.append(temp_dict)
+
     date = datetime.datetime.now()
     question_json = {'answers': question_elements,
                      'questions': questions,
@@ -361,9 +386,11 @@ def create_quiz_ap(request):
 
 
 def quiz_data(request):
+    name = request.GET.get('quizname')
     quizzes = Quiz.objects.all()
     quiz_arr = []
     for quiz in quizzes:
-        quiz_arr.append(quiz.quizjson)
+        if quiz.name == name:
+            quiz_arr.append(quiz.quizjson)
 
     return HttpResponse(json.dumps(quiz_arr), content_type="application/json")

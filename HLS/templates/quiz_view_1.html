@@ -1,5 +1,6 @@
 {% extends "index.html" %}
 {% load static %}
+{% csrf_token %}
 {% block content %}
     <div id="questions" class="col-md-12" style="visibility: hidden;">
         <div class="col-md-6" id="questions_div">
@@ -15,32 +16,52 @@
                 Correct Answer: <span id="correct" ></span>
             </div>
         </div>
-
     </div>
+    <script>
+        var results_dict = {};
+        var questionNum = 0;
+        var index = 0;
+        var json_global = '';
+        $.getJSON("api/v1/quizdata?quizname={{ quizname }}", function(json) {
+            json_global = json;
+        });
+        function nextquestion(){
+            questionNum++;
+            var quiz_json = JSON.parse(json_global);
+            $('#quest_button').attr('onclick', 'showCorrect()').html('Show Answer!');
+            $('#correctdiv').css('visibility', 'hidden');
+            $('#question_heading').html(quiz_json['questions'][questionNum]);
+            $('#choice_a').html(quiz_json['answers'][questionNum]['choices'][0]);
+            $('#choice_b').html(quiz_json['answers'][questionNum]['choices'][1]);
+            $('#choice_c').html(quiz_json['answers'][questionNum]['choices'][2]);
+            $('#choice_d').html(quiz_json['answers'][questionNum]['choices'][3]);
+        }
+    </script>
 
     <div id='quizbuttondiv' class="col-md-12">
         <div id="startquizbutton">
-            <button class="btn btn-primary btn-lg" onclick="start_polling();chart();" >Start Quiz!</button>
-            <button class="btn btn-primary btn-lg" onclick="stop_polling()" >Stop Quiz!</button>
+            <button id="startquiz" class="btn btn-primary btn-lg" onclick="start_polling(0);chart();" >Start Quiz!</button>
+            <button id="stopquiz" class="btn btn-primary btn-lg" onclick="stop_polling(); post_data();" >Stop Quiz!</button>
+            <button class="btn btn-primary btn-lg" onclick="nextquestion();" >Next question</button>
         </div>
     </div>
     <script>
-        function start_polling(){
+
+        function start_polling(questionNum){
+            $('#startquiz').prop('disabled', true);
+            $('#stopquiz').prop('disabled', false);
             interval = setInterval(function () {
                 $.when(
                         $.ajax({
                             type: "GET",
                             url: "api/v1/data",
                             success: function (response) {
-                                console.log(JSON.parse(response));
                                 response_json = JSON.parse(response);
+                                node_data = response_json['node_data'];
                             }
                         }).then(function() {
-                            localStorage.setItem("overall", JSON.stringify(response_json));
-{#                            var j = response_json['node_data'];#}
-{#                            for(var i = 0; i< Object.keys(j).length; i++){#}
-{#                                localStorage.setItem(j[i]['id'], JSON.stringify(j[i]));#}
-{#                            }#}
+                            results_dict['overall'] = JSON.stringify(response_json);
+                            results_dict['question'+questionNum] = JSON.stringify(node_data);
                         }))
             }, 1000);}
     </script>
@@ -51,43 +72,29 @@
 
     <script>
 
-        var index = 0;
-        var json_global = '';
-        $.getJSON("static/js/trivia.json", function(json) {
-            json_global = json;
-            console.log(json[index]);
-        });
-        function nextquestion(){
-            $('#quest_button').attr('onclick', 'showCorrect()').html('Show Answer!');
-            $('#correctdiv').css('visibility', 'hidden');
-            $('#question_heading').html(json_global[index]['question']);
-            $('#choice_a').html(json_global[index]['choices'][0]);
-            $('#choice_b').html(json_global[index]['choices'][1]);
-            $('#choice_c').html(json_global[index]['choices'][2]);
-            $('#choice_d').html(json_global[index]['choices'][3]);
-        }
 
-        function showCorrect(){
-            $('#correctdiv').css('visibility', 'visible');
-            $('#correct').html(json_global[index]['correct']);
-            $('#quest_button').attr('onclick', 'nextquestion()').html('Next Question!');
-            index++;
-            if(index > json_global.length -1){
-                index = 0;
-            }
-        }
-
-        function graph() {
-            $('.linkssmall').before('<div class="col-md-12" style="text-align: center;"> \
-            <div id="nextquestionbutton" style="visibility: hidden;"> \
-                <button id="quest_button" class="btn btn-primary" onclick="showCorrect()" >Show Answer!</button> \
-                </div> \
-            </div>');
-            $('#questions').css('visibility', 'visible');
-            $('#nextquestionbutton').css('visibility', 'visible');
-            $('#quizbuttondiv').css('visibility', 'hidden');
-            nextquestion();
-        }
+{##}
+{#        function showCorrect(){#}
+{#            $('#correctdiv').css('visibility', 'visible');#}
+{#            $('#correct').html(json_global[index]['correct']);#}
+{#            $('#quest_button').attr('onclick', 'nextquestion()').html('Next Question!');#}
+{#            index++;#}
+{#            if(index > json_global.length -1){#}
+{#                index = 0;#}
+{#            }#}
+{#        }#}
+{##}
+{#        function graph() {#}
+{#            $('.linkssmall').before('<div class="col-md-12" style="text-align: center;"> \#}
+{#            <div id="nextquestionbutton" style="visibility: hidden;"> \#}
+{#                <button id="quest_button" class="btn btn-primary" onclick="showCorrect()" >Show Answer!</button> \#}
+{#                </div> \#}
+{#            </div>');#}
+{#            $('#questions').css('visibility', 'visible');#}
+{#            $('#nextquestionbutton').css('visibility', 'visible');#}
+{#            $('#quizbuttondiv').css('visibility', 'hidden');#}
+{#            nextquestion();#}
+{#        }#}
 
         function chart() {
             interval;
@@ -118,22 +125,11 @@
                     backgroundColor: '#F7F7CD',
                     events: {
                         load: function () {
-
                             // set up the updating of the chart each second
                             var series = this.series[0];
-                            var response_json;
                             interval2 = setInterval(function () {
-                                            var response_json = JSON.parse(localStorage.getItem("overall"));
-                                            console.log(response_json);
+                                            var response_json = JSON.parse(results_dict["overall"]);
                                             series.setData([response_json['A'] , response_json['B'], response_json['C'], response_json['D']], true, false, true);
-
-{#                                            var j = response_json['node_data'];#}
-{#                                            for(var i = 0; i< Object.keys(j).length; i++){#}
-{#                                                localStorage.setItem(j[i]['id'], JSON.stringify(j[i]));#}
-{#                                            }#}
-
-
-
                             }, 1000);
                         }
                     }
@@ -205,6 +201,18 @@
         function stop_polling(){
             clearInterval(interval);
             clearInterval(interval2);
+            $('#stopquiz').prop('disabled', true);
+            $('#startquiz').prop('disabled', false);
+        }
+
+        function post_data(){
+
+            $.ajax({
+                url: "/api/v1/results_data",
+                type: "POST",
+                data: {myArray : results_dict}
+            });
         }
     </script>
+
 {% endblock %}
