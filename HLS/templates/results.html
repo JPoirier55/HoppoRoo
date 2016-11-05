@@ -2,6 +2,9 @@
 {% load index %}
 
 {% block content %}
+
+    <a href="javascript:void(0);" onclick="window.opener.location.href='/quizview?quizname=tester2';">Click me!</a>
+
     <div class="studentpicker" >
        <select id="studentpickerbox" onchange="location = this.value;">
            {% for quiz in results_list %}

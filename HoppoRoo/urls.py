@@ -40,6 +40,7 @@ urlpatterns = [
     url(r'^pdf_upload$', views.pdf_upload),
     url(r'^testing$', views.test_page),
     url(r'^choose_quiz$', views.choose_quiz),
+    url(r'^question_view$', views.question_view),
 
     # ----------API urls----------------
     url(r'^api/v1/create_quiz_ap$', views.create_quiz_ap),

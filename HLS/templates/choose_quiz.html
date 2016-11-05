@@ -3,7 +3,7 @@
 {% block content %}
 
     <div id='quizbuttondiv' class="col-md-12">
-        <div id="startquizbutton">
+        <div id="choose_quiz_button">
              <select id="choose_quiz">
             {% for quiz in quiz_names %}
                 <option value="{{ quiz }}" selected>{{ quiz }}</option>
@@ -15,10 +15,8 @@
       <script>
         function start_quiz(){
             var selected_quiz =$('#choose_quiz').find(':selected').text();
-            document.location.href = "/quizview?quizname="+selected_quiz;
+            window.open("/quizview?quizname="+selected_quiz, "quizViewWindow", "height=500, width=500, menubar=no,status=no");
+            document.location.href = "/question_view?quizname="+selected_quiz;
         }
     </script>
-
-
-
 {% endblock %}

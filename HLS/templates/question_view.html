@@ -1,0 +1,45 @@
+{% extends "index.html" %}
+{% load static %}
+{% csrf_token %}
+{% block content %}
+    <div id="questions" class="col-md-12">
+        <div class="col-md-6" id="questions_div">
+            <span id="question_heading"></span>
+        </div>
+        <div class="col-md-6" id="container"></div>
+        <div class="choice col-md-6">
+            A: <span id="choice_a"></span><br>
+            B: <span id="choice_b"></span><br>
+            C: <span id="choice_c"></span><br>
+            D: <span id="choice_d"></span><br>
+            <div id="correctdiv" style="visibility: hidden; background-color: #932933; color:white; text-align: center;">
+                Correct Answer: <span id="correct" ></span>
+            </div>
+        </div>
+    </div>
+    <script>
+        var questionNum = {{ question_num }};
+        var index = 0;
+        var json_global = '';
+
+        $(document).ready( function(){
+            $.getJSON("api/v1/quizdata?quizname={{ quizname }}", function(json) {
+                json_global = JSON.parse(json);
+                load_quiz();
+            });
+        });
+        function load_quiz(){
+            $('#correct').html(json_global['answers'][questionNum]['correct']);
+            if("{{ show_correct }}" == "true"){
+                $('#correctdiv').css('visibility', 'visible');
+            }else{
+                $('#correctdiv').css('visibility', 'hidden');
+            }
+            $('#question_heading').html(json_global['questions'][questionNum]);
+            $('#choice_a').html(json_global['answers'][questionNum]['choices'][0]);
+            $('#choice_b').html(json_global['answers'][questionNum]['choices'][1]);
+            $('#choice_c').html(json_global['answers'][questionNum]['choices'][2]);
+            $('#choice_d').html(json_global['answers'][questionNum]['choices'][3]);
+        }
+    </script>
+{% endblock %}

@@ -101,6 +101,16 @@ def quiz_view(request):
     return render(request, 'quiz_view_1.html', {'quizname': selected_quiz})
 
 
+def question_view(request):
+    selected_quiz = request.GET.get('quizname', '')
+    question_num = request.GET.get('question_num', '0')
+    show_correct = request.GET.get('show_correct', 'false')
+
+    return render(request, 'question_view.html', {'quizname': selected_quiz,
+                                                  'question_num': question_num,
+                                                  'show_correct': show_correct})
+
+
 # @login_required(login_url='/login/')
 def load_quiz(request):
     """

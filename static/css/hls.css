@@ -365,13 +365,25 @@ label{
     color: black;
     font-size:1.8vw;
 }
+/*--------------- choose quiz page style -------------*/
+#choose_quiz_button{
+    display: block;
+    width:50%;
+    margin-left:auto;
+    margin-right:auto;
+    margin-top:200px;
+}
 
 /*---------------- quiz view page style --------------*/
-
+#startquiz{
+    width:100px;
+}
+#stopquiz{
+    width:30%;
+}
 #startquizbutton{
-    width: 50%;
-    margin: 0 auto;
-    text-align: center;
+    position: absolute;
+    bottom:0;
 }
 
 #questions_div{
@@ -390,8 +402,12 @@ label{
     /*background-color: white;*/
 }
 #container{
-    float: right;
-    padding-top: 50px;
+    width: 80%;
+    height: 300px;
+    margin-left: 10%;
+    margin-right: 10%;
+    position: absolute;
+    bottom: 120px;
 }
 /*----------------------pdf viewer page-----------------------*/
 
