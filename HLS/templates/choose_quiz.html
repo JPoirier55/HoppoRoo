@@ -1,0 +1,22 @@
+{% extends "index.html" %}
+{% load static %}
+{% block content %}
+
+    <div id='quizbuttondiv' class="col-md-12">
+        <div id="choose_quiz_button">
+             <select id="choose_quiz">
+            {% for quiz in quiz_names %}
+                <option value="{{ quiz }}" selected>{{ quiz }}</option>
+            {% endfor %}
+        </select>
+            <button class="btn btn-primary btn-lg" onclick="start_quiz();" >Start Quiz!</button>
+        </div>
+    </div>
+      <script>
+        function start_quiz(){
+            var selected_quiz =$('#choose_quiz').find(':selected').text();
+            window.open("/quizview?quizname="+selected_quiz, "quizViewWindow", "height=500, width=500, menubar=no,status=no");
+            document.location.href = "/question_view?quizname="+selected_quiz;
+        }
+    </script>
+{% endblock %}

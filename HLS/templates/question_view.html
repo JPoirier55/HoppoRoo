@@ -1,0 +1,17 @@
+{% extends "index.html" %}
+{% load static %}
+{% csrf_token %}
+{% block content %}
+    <div id="question_div">
+        {{ question }}
+    </div>
+    <div id="choices_div">
+        A: {{ choice_a }}<br><br>
+        B: {{ choice_b }}<br><br>
+        C: {{ choice_c }}<br><br>
+        D: {{ choice_d }}<br><br>
+        <div id="correctdiv" style="visibility: hidden; background-color: #932933; color:white; text-align: center;">
+            Correct Answer: <span id="correct" ></span>
+        </div>
+    </div>
+{% endblock %}

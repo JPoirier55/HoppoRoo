@@ -79,6 +79,14 @@ def quizzes_home(request):
     return render(request, 'quizzes_home.html')
 
 
+def choose_quiz(request):
+    quizzes = Quiz.objects.all()
+    quiz_names = []
+    for quiz in quizzes:
+        quiz_names.append(quiz.name)
+    return render(request, 'choose_quiz.html', {'quiz_names': quiz_names})
+
+
 # @login_required(login_url='/login/')
 def quiz_view(request):
     """
@@ -87,8 +95,35 @@ def quiz_view(request):
     :param request: wsgi request
     :return: rendered quiz view page
     """
-    set_ip_adds.run_nmap()
-    return render(request, 'quiz_view_1.html', {})
+    # set_ip_adds.run_nmap()
+    selected_quiz = request.GET.get('quizname')
+    quiz = Quiz.objects.get(name=selected_quiz)
+    quiz_length = len(json.loads(quiz.quizjson)['questions'])
+    return render(request, 'quiz_view_1.html', {'quizname': selected_quiz,
+                                                'quiz_length': quiz_length,
+                                                })
+
+
+def question_view(request):
+    selected_quiz = request.GET.get('quizname', '')
+    question_num = request.GET.get('question_num', 0)
+    show_correct = request.GET.get('show_correct', 'false')
+    quiz = Quiz.objects.get(name=selected_quiz)
+    quizjson = json.loads(quiz.quizjson)
+    question = quizjson['questions'][int(question_num)]
+    choice_a = quizjson['answers'][int(question_num)]['choices'][0]
+    choice_b = quizjson['answers'][int(question_num)]['choices'][1]
+    choice_c = quizjson['answers'][int(question_num)]['choices'][2]
+    choice_d = quizjson['answers'][int(question_num)]['choices'][3]
+
+    return render(request, 'question_view.html', {'quizname': selected_quiz,
+                                                  'question_num': question_num,
+                                                  'show_correct': show_correct,
+                                                  'question': question,
+                                                  'choice_a': choice_a,
+                                                  'choice_b': choice_b,
+                                                  'choice_c': choice_c,
+                                                  'choice_d': choice_d})
 
 
 # @login_required(login_url='/login/')
@@ -201,8 +236,8 @@ def results(request):
     :param request: wsgi request
     :return: results page with quiz metrics metrics data
     """
-    metrics = results_metrics()
-    return render(request, 'results.html', {'results_list': metrics})
+    # metrics = results_metrics()
+    return render(request, 'results.html')
 
 
 # @login_required(login_url='/login/')
@@ -266,6 +301,20 @@ def delete_file(request):
         return HttpResponseBadRequest('PDF DELETE ERROR:{0}'.format(e.strerror))
 
 
+def serve_quiz(request):
+    quizzes = Quiz.objects.all()
+    quiz_json = []
+    for quiz in quizzes:
+        quiz_json.append(quiz.quizjson)
+    return HttpResponse(json.dumps(quiz_json))
+
+@csrf_exempt
+def result_post_point(request):
+    post_dict = request.POST
+    print post_dict
+    return HttpResponse("success")
+
+
 def data_access_point(request):
     """
     Point that holds and updates all mat data and consolidates it
@@ -273,32 +322,39 @@ def data_access_point(request):
     :param request: request from current page
     :return: response object with json data
     """
-    ip_arr = set_ip_adds.parse_nmap()
-    response_data = {}
-    a = 0
-    b = 0
-    c = 0
-    d = 0
-    nodes = {}
-    for ip in ip_arr:
-        try:
-            response_data = json.loads(requests.get("http://{0}:8080".format(ip)).text)
-            a += int(response_data['buttonA'])
-            b += int(response_data['buttonB'])
-            c += int(response_data['buttonC'])
-            d += int(response_data['buttonD'])
-	    
-            nodes[response_data['id']] = response_data
-	except requests.RequestException:
-            return HttpResponse(json.dumps({}))
-        
-    output_json = {'A': a,
-                   'B': b,
-                   'C': c,
-                   'D': d,
-		   'node_data': nodes}
+    # ip_arr = set_ip_adds.parse_nmap()
+    # response_data = {}
+    # a = 0
+    # b = 0
+    # c = 0
+    # d = 0
+    # nodes = {}
+    # for ip in ip_arr:
+    #     try:
+    #         # response_data = json.loads(requests.get("http://{0}:8080".format(ip)).text)
+    #         # a += int(response_data['buttonA'])
+    #         # b += int(response_data['buttonB'])
+    #         # c += int(response_data['buttonC'])
+    #         # d += int(response_data['buttonD'])
+    #
+    #         nodes["1"] = response_data
+    #     except requests.RequestException:
+    #         return HttpResponse(json.dumps({}))
+    output_json = {'A': 1,
+                   'B': 2,
+                   'C': 4,
+                   'D': 3,
+                   'node_data': 'testse'}
+    # output_json = {'A': a,
+    #                'B': b,
+    #                'C': c,
+    #                'D': d,
+    #                'node_data': nodes}
 
-    return HttpResponse(json.dumps(output_json))
+    return HttpResponse(json.dumps({"A": 0, "node_data": {"0": {"buttonC": "0", "buttonB": "1", "buttonA": "0", "id": "1", "buttonD": "0"},
+                                                          "1": {"buttonC": "0", "buttonB": "1", "buttonA": "0", "id": "2", "buttonD": "0"},
+                                                          "2": {"buttonC": "0", "buttonB": "1", "buttonA": "0", "id": "3", "buttonD": "0"}},
+                                    "C": 0, "B": 1, "D": 0}))
 
 
 def create_quiz_ap(request):
@@ -315,10 +371,11 @@ def create_quiz_ap(request):
     quiz_model = None
     questions = []
     question_elements = []
-    question_json = {}
+
     for key, value in post_dict.iteritems():
         if 'question' in key:
             question_count += 1
+
     if get_dict['pdf'] == 'true':
         for i in range(question_count):
             index = str(i)
@@ -327,7 +384,6 @@ def create_quiz_ap(request):
             temp_dict = {'question_num': index,
                          'correct': post_dict['question'+index]}
             question_elements.append(temp_dict)
-
     else:
         for i in range(question_count):
             index = str(i)
@@ -339,6 +395,7 @@ def create_quiz_ap(request):
                                      post_dict['choice3' + index],
                                      post_dict['choice4' + index]]}
             question_elements.append(temp_dict)
+
     date = datetime.datetime.now()
     question_json = {'answers': question_elements,
                      'questions': questions,
@@ -354,9 +411,11 @@ def create_quiz_ap(request):
 
 
 def quiz_data(request):
+    name = request.GET.get('quizname')
     quizzes = Quiz.objects.all()
     quiz_arr = []
     for quiz in quizzes:
-        quiz_arr.append(quiz.quizjson)
+        if quiz.name == name:
+            quiz_arr.append(quiz.quizjson)
 
     return HttpResponse(json.dumps(quiz_arr), content_type="application/json")

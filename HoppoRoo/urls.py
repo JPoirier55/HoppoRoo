@@ -36,14 +36,21 @@ urlpatterns = [
     url(r'^students$', views.students),
     url(r'^results$', views.results),
     url(r'^help', views.help),
+    url(r'^pdf_view$', views.pdf_view),
+    url(r'^pdf_upload$', views.pdf_upload),
+    url(r'^testing$', views.test_page),
+    url(r'^choose_quiz$', views.choose_quiz),
+    url(r'^question_view$', views.question_view),
+
+    # ----------API urls----------------
     url(r'^api/v1/create_quiz_ap$', views.create_quiz_ap),
     url(r'^api/v1/data$', views.data_access_point),
     url(r'^api/v1/quizdata$', views.quiz_data),
     url(r'^api/v1/upload$', views.upload_file),
     url(r'^api/v1/delete$', views.delete_file),
-    url(r'^pdf_view$', views.pdf_view),
-    url(r'^pdf_upload$', views.pdf_upload),
-    url(r'^testing$', views.test_page),
+    url(r'^api/v1/results_data$', views.result_post_point),
+    url(r'^api/v1/quiz_data$', views.serve_quiz),
+
 ]
 
 
