@@ -7,20 +7,23 @@
 """
 
 import subprocess
-
+import os
 
 def run_nmap():
     subprocess.call(["sh", "/home/pi/HoppoRoo/HoppoRoo/scripts/search_nmap.sh"])
 
 
-def parse_nmap():
+def parse_nmap(list='iplist.txt'):
     """
     Script to parse output of nmap and find ip addresses
     of mats that are connected
     :return: list of ip addresses connected
     """
-    dir = "/home/pi/HoppoRoo/HoppoRoo/scripts/iplist.txt"
-    #dir = 'C:\\Users\\Jake\\git3\\HoppoRoo\\scripts\\iplist.txt'
+    if os.name == 'posix':
+        dir = "/home/pi/HoppoRoo/HoppoRoo/scripts/"+list
+    else:
+        dir = 'C:\\Users\\Jake\\git3\\HoppoRoo\\scripts\\'+list.replace("/", "\\")
+
     with open(dir, 'r') as nmap_file:
         nmap_contents = nmap_file.readlines()
 

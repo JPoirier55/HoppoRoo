@@ -1,0 +1,4 @@
+
+Starting Nmap 6.47 ( http://nmap.org ) at 2016-10-29 12:30 MDT
+Nmap scan report for 192.168.42.1
+Host is up.

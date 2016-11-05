@@ -1,0 +1,8 @@
+
+Starting Nmap 6.47 ( http://nmap.org ) at 2016-10-29 12:30 MDT
+Nmap scan report for 192.168.42.1
+Host is up.
+Nmap scan report for 192.168.42.15
+Host is up (0.083s latency).
+MAC Address: 5C:CF:7F:0E:2F:C6 (Unknown)
+Nmap done: 25 IP addresses (2 hosts up) scanned in 2.31 seconds
