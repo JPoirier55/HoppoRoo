@@ -97,18 +97,33 @@ def quiz_view(request):
     """
     # set_ip_adds.run_nmap()
     selected_quiz = request.GET.get('quizname')
-
-    return render(request, 'quiz_view_1.html', {'quizname': selected_quiz})
+    quiz = Quiz.objects.get(name=selected_quiz)
+    quiz_length = len(json.loads(quiz.quizjson)['questions'])
+    return render(request, 'quiz_view_1.html', {'quizname': selected_quiz,
+                                                'quiz_length': quiz_length,
+                                                })
 
 
 def question_view(request):
     selected_quiz = request.GET.get('quizname', '')
-    question_num = request.GET.get('question_num', '0')
+    question_num = request.GET.get('question_num', 0)
     show_correct = request.GET.get('show_correct', 'false')
+    quiz = Quiz.objects.get(name=selected_quiz)
+    quizjson = json.loads(quiz.quizjson)
+    question = quizjson['questions'][int(question_num)]
+    choice_a = quizjson['answers'][int(question_num)]['choices'][0]
+    choice_b = quizjson['answers'][int(question_num)]['choices'][1]
+    choice_c = quizjson['answers'][int(question_num)]['choices'][2]
+    choice_d = quizjson['answers'][int(question_num)]['choices'][3]
 
     return render(request, 'question_view.html', {'quizname': selected_quiz,
                                                   'question_num': question_num,
-                                                  'show_correct': show_correct})
+                                                  'show_correct': show_correct,
+                                                  'question': question,
+                                                  'choice_a': choice_a,
+                                                  'choice_b': choice_b,
+                                                  'choice_c': choice_c,
+                                                  'choice_d': choice_d})
 
 
 # @login_required(login_url='/login/')
