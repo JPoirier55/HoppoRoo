@@ -11,13 +11,15 @@ import os
 import json
 import datetime
 import requests
-from models import Quiz, Results, PDFQuiz, Student
+from results import results_process_questions
+from results import results_process_data
+from models import Quiz, Results, PDFQuiz, Student, Device
 from django.shortcuts import render, HttpResponseRedirect, HttpResponse
 from django.http import HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate, login, logout
-from results import results_metrics
 from scripts import set_ip_adds
+import xlsxwriter
 
 
 def test_page(request):
@@ -236,12 +238,16 @@ def results(request):
     :param request: wsgi request
     :return: results page with quiz metrics metrics data
     """
-    # metrics = results_metrics()
-    return render(request, 'results.html')
+    results_objs = Results.objects.all()
+    students_objs = Student.objects.all()
+    chosen_student = request.GET.get('student', 'all')
+    return render(request, 'results.html', {'results_list': results_objs,
+                                            'students': students_objs,
+                                            'chosen_student': chosen_student})
 
 
 # @login_required(login_url='/login/')
-def students(request):
+def students_backup(request):
     student_objs = Student.objects.all()
     names = [student.name for student in student_objs]
 
@@ -253,9 +259,9 @@ def students(request):
         student_name = request.GET['name']
 
     student_obj = Student.objects.get(name=student_name)
-    results = Results.objects.filter(student__name=student_obj.name)
+    results_objs = Results.objects.filter(student__name=student_obj.name)
 
-    for result in results:
+    for result in results_objs:
         quiz_dict = {'quiz': result.quiz.name,
                      'quiz_id': result.quiz.id,
                      'score': result.score}
@@ -265,6 +271,15 @@ def students(request):
                                              'chosen_student': student_name,
                                              'results': results_arr,
                                              })
+
+
+def students(request):
+    devices = Device.objects.all()
+    return render(request, 'students1.html', {'devices': devices})
+
+
+def students_add(request):
+    return render(request, 'student_add.html')
 
 
 # ---------------------- API SECTION ----------------- #
@@ -308,10 +323,33 @@ def serve_quiz(request):
         quiz_json.append(quiz.quizjson)
     return HttpResponse(json.dumps(quiz_json))
 
+
 @csrf_exempt
 def result_post_point(request):
+    quizname = request.GET.get('quizname')
+    devices = Device.objects.all()
+    quiz_obj = Quiz.objects.get(name=quizname)
+
+    quizjson = json.loads(quiz_obj.quizjson)
+    overall_dict = results_process_questions(quizjson)
+
     post_dict = request.POST
-    print post_dict
+    results_dict = results_process_data(post_dict, overall_dict, devices)
+
+    for device in devices:
+        score = 0
+        for result in results_dict:
+            if device.student.name in result['student']:
+                score += int(result['score'])
+        try:
+            result = Results()
+            result.quiz = quiz_obj
+            result.student = device.student
+            result.score = score
+            result.save()
+        except Exception:
+            return HttpResponse("failure")
+
     return HttpResponse("success")
 
 
@@ -351,9 +389,9 @@ def data_access_point(request):
     #                'D': d,
     #                'node_data': nodes}
 
-    return HttpResponse(json.dumps({"A": 0, "node_data": {"0": {"buttonC": "0", "buttonB": "1", "buttonA": "0", "id": "1", "buttonD": "0"},
-                                                          "1": {"buttonC": "0", "buttonB": "1", "buttonA": "0", "id": "2", "buttonD": "0"},
-                                                          "2": {"buttonC": "0", "buttonB": "1", "buttonA": "0", "id": "3", "buttonD": "0"}},
+    return HttpResponse(json.dumps({"A": 0, "node_data": {"55555": {"buttonC": "0", "buttonB": "1", "buttonA": "0", "buttonD": "0"},
+                                                          "12345": {"buttonC": "0", "buttonB": "0", "buttonA": "1", "buttonD": "0"},
+                                                          "11111": {"buttonC": "0", "buttonB": "0", "buttonA": "0", "buttonD": "1"}},
                                     "C": 0, "B": 1, "D": 0}))
 
 
@@ -419,3 +457,58 @@ def quiz_data(request):
             quiz_arr.append(quiz.quizjson)
 
     return HttpResponse(json.dumps(quiz_arr), content_type="application/json")
+
+
+def add_student_device(request):
+    post_dict = request.POST
+    try:
+        student = Student()
+        student.id = post_dict['student_id']
+        student.name = post_dict['student_name']
+        student.save()
+        device = Device()
+        device.id = post_dict['device_id']
+        device.student = student
+        device.save()
+        return HttpResponseRedirect('/students')
+    except Exception as e:
+        error_message = '''Failure adding student to database. Try again and make sure inputs are correct,
+                         student IDs are not duplicated and all fields have been filled out.'''
+        return render(request, 'generic_error.html', {"error_message": error_message,
+                                                      "return": '/students'})
+
+
+def export_xlsx(request):
+    results = Results.objects.all()
+    students = Student.objects.all()
+    quizzes = Quiz.objects.all()
+    devices = Device.objects.all().order_by('student__name')
+    try:
+        workbook = xlsxwriter.Workbook("Results-"+str(datetime.datetime.now().date())+".xlsx")
+        worksheet = workbook.add_worksheet()
+
+        bold = workbook.add_format({'bold': True})
+        worksheet.write('B1', 'Student', bold)
+        worksheet.write('C1', 'Student_ID', bold)
+        worksheet.write('D1', 'Device_ID', bold)
+        for quiz in quizzes:
+            worksheet.write(0, quiz.id+3, quiz.name, bold)
+
+        for index in range(len(devices)):
+            worksheet.write(index + 1, 1, devices[index].student.name)
+            worksheet.write(index + 1, 2, devices[index].student.id)
+            worksheet.write(index + 1, 3, devices[index].id)
+            for result in results:
+                for quiz in quizzes:
+                    if devices[index].student.name == result.student.name and result.quiz.name == quiz.name:
+                        worksheet.write(index + 1, quiz.id+3, result.score)
+
+        workbook.close()
+        return HttpResponseRedirect('/results')
+    except Exception:
+        error_message = '''Failure to write to worksheet/spreadsheet. Please ensure that the spreadsheet
+                        for today has been closed.'''
+        return render(request, 'generic_error.html', {"error_message": error_message,
+                                                      "return": '/results'})
+
+

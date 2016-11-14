@@ -1,0 +1,20 @@
+{% extends "index.html" %}
+{% load index %}
+{% block content %}
+
+     <div class="page-header">
+        <h1 style="font-size: 7vw;">Student Add</h1>
+    </div>
+
+    <form action='/api/v1/add_student_device' method='post'>{% csrf_token %}
+             <div style="width: 30%;display: block;margin-left: auto;margin-right: auto;margin-bottom: 100px;font-family: Arial;font-size: 2vw;">
+                <label style="color: #000;" for='student' >Student:</label>
+                 <input id='student' name='student_name' type='text' />
+                 <label style="color: #000;" for='student_id' >Student ID:</label>
+                 <input id='student_id' name='student_id' type='number' />
+                 <label style="color: #000;" for='device_id' >Device ID:</label>
+                 <input id='device_id' name='device_id' type='number' />
+                <button id="add_device" class="btn btn-primary" style="display: block;margin-left: auto; margin-right: auto;width: 350px;height:60px;font-size: 20px;">Add Student and Device to System</button>
+            </div>
+        </form>
+{% endblock %}

@@ -24,7 +24,9 @@ def results_metrics():
         scores = []
         single_metrics = {}
         for result in results:
+            print result
             scores.append(result.score)
+        print scores
         single_metrics['scores'] = scores
         single_metrics['name'] = quiz.name
         single_metrics['num_of_questions'] = len(quiz_json['questions'])
@@ -37,3 +39,46 @@ def results_metrics():
         single_metrics['class_median'] = utils.median(scores)
         metrics[quiz.name] = single_metrics
     return metrics
+
+
+def results_process_questions(quizjson):
+    question_index = 0
+    overall_dict = []
+    for answer in quizjson['answers']:
+        choice_a = answer['choices'][0]
+        choice_b = answer['choices'][1]
+        choice_c = answer['choices'][2]
+        choice_d = answer['choices'][3]
+        if answer['correct'] == choice_a:
+            correct = 'buttonA'
+        elif answer['correct'] == choice_b:
+            correct = 'buttonB'
+        elif answer['correct'] == choice_c:
+            correct = 'buttonC'
+        else:
+            correct = 'buttonD'
+
+        temp = {'question': question_index,
+                'question_name': quizjson['questions'][question_index],
+                'correct': correct}
+        overall_dict.append(temp)
+        question_index += 1
+    return overall_dict
+
+
+def results_process_data(post_dict, overall_dict, devices):
+    results_dict = []
+    for key, value in post_dict.iteritems():
+        if 'question' in key:
+            for device in devices:
+                if str(device.id) in json.loads(post_dict[key]).keys():
+                    value_dict = json.loads(post_dict[key])[str(device.id)]
+                    question_num = key[-1]
+
+                    answer = overall_dict[int(question_num)]['correct']
+                    score = {'question': question_num,
+                             'question_name': overall_dict[int(question_num)]['question_name'],
+                             'score': value_dict[answer],
+                             'student': device.student.name}
+                    results_dict.append(score)
+    return results_dict

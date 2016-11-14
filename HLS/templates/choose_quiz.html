@@ -15,7 +15,7 @@
       <script>
         function start_quiz(){
             var selected_quiz =$('#choose_quiz').find(':selected').text();
-            window.open("/quizview?quizname="+selected_quiz, "quizViewWindow", "height=500, width=500, menubar=no,status=no");
+            window.open("/quizview?quizname="+selected_quiz, "quizViewWindow", "height=550, width=500, menubar=no,status=no");
             document.location.href = "/question_view?quizname="+selected_quiz;
         }
     </script>
