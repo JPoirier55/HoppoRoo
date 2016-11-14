@@ -34,6 +34,7 @@ urlpatterns = [
     url(r'^quizzes/create_quiz/build$', views.build_quiz),
     url(r'^quizzes/recent_quizzes$', views.create_quiz),
     url(r'^students$', views.students),
+    url(r'^students/add_new$', views.students_add),
     url(r'^results$', views.results),
     url(r'^help', views.help),
     url(r'^pdf_view$', views.pdf_view),
@@ -50,7 +51,8 @@ urlpatterns = [
     url(r'^api/v1/delete$', views.delete_file),
     url(r'^api/v1/results_data$', views.result_post_point),
     url(r'^api/v1/quiz_data$', views.serve_quiz),
-
+    url(r'^api/v1/add_student_device$', views.add_student_device),
+    url(r'^api/v1/export$', views.export_xlsx),
 ]
 
 

@@ -18,27 +18,36 @@
 
 <div id="container"></div>
 
-<div class="navbar-fixed-bottom navbar-text" style="margin-left: 50px;">
-    <button id="previous_button" class="btn btn-primary" style="width: 100px;height:40px;font-size: 20px;" onclick="prevQuestion();" >Previous</button>
-    <button style="width: 100px;height:40px;font-size: 20px; background-color: green;" id="startquiz" class="btn btn-primary" onclick="start_polling(0);chart();" >Start</button>
-    <button style="width: 100px;height:40px;font-size: 20px;background-color: red;" id="stopquiz" class="btn btn-primary" onclick="stop_polling(); post_data();" disabled="true">Stop</button>
+<div class="navbar-fixed-bottom navbar-text" style="bottom: 50px;margin-left: 50px;">
+    <button id="previous_button" class="btn btn-primary" style="width: 100px;height:40px;font-size: 20px;" onclick="prevQuestion();" disabled="true">Previous</button>
+    <button style="width: 100px;height:40px;font-size: 20px; background-color: green;" id="startquiz" class="btn btn-primary" onclick="start_polling();chart();" >Start</button>
+    <button style="width: 100px;height:40px;font-size: 20px;background-color: red;" id="stopquiz" class="btn btn-primary" onclick="stop_polling();" disabled="true">Stop</button>
     <button id="next_button" class="btn btn-primary" style="width: 100px;height:40px;font-size: 20px;" onclick="nextQuestion();">Next</button>
+</div>
+
+<div class="navbar-fixed-bottom navbar-text" style="bottom: 0;margin-left: 200px;">
+    <button id="finish_submit_quiz" class="btn btn-primary" style="width: 120px;height:40px;font-size: 20px;" onclick="submit_final_quiz();" disabled="true">Submit Quiz</button>
 </div>
 
 <script>
     questionNum = 0;
     function nextQuestion(){
         questionNum++;
-        if(questionNum >= {{ quiz_length }}){
-            questionNum = 0;
+        $('#previous_button').prop('disabled', false);
+        if(questionNum >= {{ quiz_length }}-1){
+            questionNum = {{ quiz_length }}-1;
+            $('#next_button').prop('disabled', true);
+            $('#finish_submit_quiz').prop('disabled', false);
         }
         $('#questionNumber').html("Question Number: "+ (questionNum+1));
        window.opener.location.href='/question_view?quizname={{ quizname }}&question_num='+questionNum;
     }
     function prevQuestion(){
         questionNum--;
-        if(questionNum < 0){
-            questionNum = {{ quiz_length }}-1;
+        $('#next_button').prop('disabled', false);
+        if(questionNum <= 0){
+            questionNum = 0;
+            $('#previous_button').prop('disabled', true);
         }
         $('#questionNumber').html("Question Number: "+ (questionNum+1));
        window.opener.location.href='/question_view?quizname={{ quizname }}&question_num='+questionNum;
@@ -187,6 +196,13 @@
             url: "/api/v1/results_data",
             type: "POST",
             data: {myArray : results_dict}
+        });
+    }
+    function submit_final_quiz(){
+        $.ajax({
+            url: "/api/v1/results_data?quizname={{ quizname }}",
+            type: "POST",
+            data: results_dict
         });
     }
 </script>
