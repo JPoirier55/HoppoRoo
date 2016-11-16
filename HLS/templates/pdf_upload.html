@@ -30,7 +30,7 @@
         {% for file in pdfs %}
         <tr>
             <td>{{ file.name }}</td>
-            <td><a href="/api/v1/delete?filename={{ file.dir }}">X</a> </td>
+            <td><a href="/api/v1/delete?filename={{ file.dir }}&redirect=pdf_upload">X</a> </td>
         </tr>
         {% endfor %}
         </table>

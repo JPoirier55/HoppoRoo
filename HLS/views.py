@@ -284,6 +284,7 @@ def students_add(request):
 
 # ---------------------- API SECTION ----------------- #
 
+
 @csrf_exempt
 def upload_file(request):
     """
@@ -309,9 +310,10 @@ def delete_file(request):
     :return: response for delete
     """
     filename = request.GET.get('filename')
+    redirect = request.GET.get('redirect')
     try:
         os.remove(filename)
-        return HttpResponseRedirect("/pdf_upload")
+        return HttpResponseRedirect("/"+redirect)
     except IOError as e:
         return HttpResponseBadRequest('PDF DELETE ERROR:{0}'.format(e.strerror))
 
@@ -485,7 +487,7 @@ def export_xlsx(request):
     quizzes = Quiz.objects.all()
     devices = Device.objects.all().order_by('student__name')
     try:
-        workbook = xlsxwriter.Workbook("Results-"+str(datetime.datetime.now().date())+".xlsx")
+        workbook = xlsxwriter.Workbook("Results.xlsx")
         worksheet = workbook.add_worksheet()
 
         bold = workbook.add_format({'bold': True})
@@ -505,7 +507,14 @@ def export_xlsx(request):
                         worksheet.write(index + 1, quiz.id+3, result.score)
 
         workbook.close()
-        return HttpResponseRedirect('/results')
+        
+        raw_text = open("/home/pi/HoppoRoo/HoppoRoo/Results.xlsx", 'rb').read()
+
+        response = HttpResponse(raw_text, content_type='text/plain')
+        response['Content-Disposition'] = 'attachment; filename={0}'.format(
+            "Results" + str(datetime.datetime.now().date()) + ".xlsx")
+
+        return response
     except Exception:
         error_message = '''Failure to write to worksheet/spreadsheet. Please ensure that the spreadsheet
                         for today has been closed.'''
