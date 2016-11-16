@@ -135,7 +135,7 @@ def load_quiz(request):
     :param request: wsgi request
     :return: rendered load quiz page
     """
-    id = request.GET.get('id', 1)
+    id = request.GET.get('id')
     quiz_names = []
     quiz_ids = []
     qt = []
@@ -144,8 +144,10 @@ def load_quiz(request):
         quiz_names.append(quiz.name)
         quiz_ids.append(quiz.id)
         qt.append(quiz)
-    quiz_obj = json.loads(Quiz.objects.get(id=id).quizjson)
-    print quiz_obj
+    if id is None:
+	quiz_obj = {}
+    else:
+        quiz_obj = json.loads(Quiz.objects.get(id=id).quizjson)
 
     return render(request, 'load_quiz.html', {'chosen_quiz': quiz_obj,
                                               'quiz_ids': quiz_ids,
@@ -370,6 +372,7 @@ def data_access_point(request):
     d = 0
     nodes = {}
     for ip in ip_arr:
+	print ip
         try:
             response_data = json.loads(requests.get("http://{0}:8080".format(ip)).text)
             a += int(response_data['buttonA'])
