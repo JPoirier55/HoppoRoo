@@ -507,7 +507,7 @@ def export_xlsx(request):
                         worksheet.write(index + 1, quiz.id+3, result.score)
 
         workbook.close()
-        
+
         raw_text = open("/home/pi/HoppoRoo/HoppoRoo/Results.xlsx", 'rb').read()
 
         response = HttpResponse(raw_text, content_type='text/plain')
