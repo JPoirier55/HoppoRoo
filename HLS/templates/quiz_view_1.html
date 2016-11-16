@@ -199,11 +199,15 @@
         });
     }
     function submit_final_quiz(){
+	  $.when(
         $.ajax({
             url: "/api/v1/results_data?quizname={{ quizname }}",
             type: "POST",
             data: results_dict
-        });
+        })).then(function(){
+            window.opener.location.href='/results';
+            close();
+        })
     }
 </script>
 </body>

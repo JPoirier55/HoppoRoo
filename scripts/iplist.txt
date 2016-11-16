@@ -1,11 +1,11 @@
 
-Starting Nmap 6.47 ( http://nmap.org ) at 2016-11-16 05:07 UTC
+Starting Nmap 6.47 ( http://nmap.org ) at 2016-11-16 05:49 UTC
 Nmap scan report for 192.168.42.1
 Host is up.
 Nmap scan report for 192.168.42.19
-Host is up (0.100s latency).
+Host is up (0.010s latency).
 MAC Address: 5C:CF:7F:0E:2F:C6 (Unknown)
 Nmap scan report for 192.168.42.21
-Host is up (0.084s latency).
+Host is up (0.010s latency).
 MAC Address: 18:FE:34:0E:2E:EF (Espressif)
-Nmap done: 50 IP addresses (3 hosts up) scanned in 3.13 seconds
+Nmap done: 50 IP addresses (3 hosts up) scanned in 1.66 seconds

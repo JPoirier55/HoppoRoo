@@ -346,7 +346,8 @@ def result_post_point(request):
             if device.student.name in result['student']:
                 score += int(result['score'])
         try:
-            result = Results()
+            #obj, create = Results.objects.update_or_create(quiz=quiz_obj, student=device.student, score=score)
+	    result = Results()
             result.quiz = quiz_obj
             result.student = device.student
             result.score = score
