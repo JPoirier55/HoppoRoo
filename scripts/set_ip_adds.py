@@ -37,7 +37,7 @@ def parse_nmap(list='iplist.txt'):
     esp_arr = []
     for device_index in range(len(iparr)):
         if device_index < len(iparr) - 1:
-            if "5C:CF:7F" in iparr[device_index+1]:
+            if "MAC" in iparr[device_index+1]:
                 esp_arr.append(iparr[device_index])
 
     return esp_arr
