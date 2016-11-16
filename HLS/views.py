@@ -97,7 +97,7 @@ def quiz_view(request):
     :param request: wsgi request
     :return: rendered quiz view page
     """
-    # set_ip_adds.run_nmap()
+    set_ip_adds.run_nmap()
     selected_quiz = request.GET.get('quizname')
     quiz = Quiz.objects.get(name=selected_quiz)
     quiz_length = len(json.loads(quiz.quizjson)['questions'])
@@ -360,39 +360,40 @@ def data_access_point(request):
     :param request: request from current page
     :return: response object with json data
     """
-    # ip_arr = set_ip_adds.parse_nmap()
-    # response_data = {}
-    # a = 0
-    # b = 0
-    # c = 0
-    # d = 0
-    # nodes = {}
-    # for ip in ip_arr:
-    #     try:
-    #         # response_data = json.loads(requests.get("http://{0}:8080".format(ip)).text)
-    #         # a += int(response_data['buttonA'])
-    #         # b += int(response_data['buttonB'])
-    #         # c += int(response_data['buttonC'])
-    #         # d += int(response_data['buttonD'])
-    #
-    #         nodes["1"] = response_data
-    #     except requests.RequestException:
-    #         return HttpResponse(json.dumps({}))
-    output_json = {'A': 1,
-                   'B': 2,
-                   'C': 4,
-                   'D': 3,
-                   'node_data': 'testse'}
-    # output_json = {'A': a,
-    #                'B': b,
-    #                'C': c,
-    #                'D': d,
-    #                'node_data': nodes}
+    ip_arr = set_ip_adds.parse_nmap()
+    response_data = {}
+    a = 0
+    b = 0
+    c = 0
+    d = 0
+    nodes = {}
+    for ip in ip_arr:
+        try:
+            response_data = json.loads(requests.get("http://{0}:8080".format(ip)).text)
+            a += int(response_data['buttonA'])
+            b += int(response_data['buttonB'])
+            c += int(response_data['buttonC'])
+            d += int(response_data['buttonD'])
 
-    return HttpResponse(json.dumps({"A": 0, "node_data": {"55555": {"buttonC": "0", "buttonB": "1", "buttonA": "0", "buttonD": "0"},
-                                                          "12345": {"buttonC": "0", "buttonB": "0", "buttonA": "1", "buttonD": "0"},
-                                                          "11111": {"buttonC": "0", "buttonB": "0", "buttonA": "0", "buttonD": "1"}},
-                                    "C": 0, "B": 1, "D": 0}))
+            nodes[response_data['id']] = response_data
+        except requests.RequestException:
+            return HttpResponse(json.dumps({}))
+    # output_json = {'A': 1,
+    #                'B': 2,
+    #                'C': 4,
+    #                'D': 3,
+    #                'node_data': 'testse'}
+    output_json = {'A': a,
+                   'B': b,
+                   'C': c,
+                   'D': d,
+                   'node_data': nodes}
+
+    # return HttpResponse(json.dumps({"A": 0, "node_data": {"55555": {"buttonC": "0", "buttonB": "1", "buttonA": "0", "buttonD": "0"},
+    #                                                       "12345": {"buttonC": "0", "buttonB": "0", "buttonA": "1", "buttonD": "0"},
+    #                                                       "11111": {"buttonC": "0", "buttonB": "0", "buttonA": "0", "buttonD": "1"}},
+    #                                 "C": 0, "B": 1, "D": 0}))
+    return HttpResponse(json.dumps(output_json))
 
 
 def create_quiz_ap(request):
