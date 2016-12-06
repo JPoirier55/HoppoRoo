@@ -11,8 +11,7 @@ import os
 import json
 import datetime
 import requests
-from results import results_process_questions
-from results import results_process_data
+import quiz_utils, student_utils, utils, results_utils
 from models import Quiz, Results, PDFQuiz, Student, Device
 from django.shortcuts import render, HttpResponseRedirect, HttpResponse
 from django.http import HttpResponseBadRequest
@@ -23,6 +22,11 @@ import xlsxwriter
 
 
 def test_page(request):
+    """
+    For testing purposes only
+    :param request: wsgi request
+    :return: render test page
+    """
     numpages = 5
     quizzest = Quiz.objects.all()
     return render(request, 'testingpage.html', {'numpages': len(quizzest),
@@ -50,12 +54,22 @@ def auth_view(request):
 
 
 def logout_view(request):
+    """
+    View to handle logout template
+    :param request: wsgi request
+    :return: render login page
+    """
     logout(request)
-    msg = 'you have been loggd out'
+    msg = 'you have been logged out'
     return render(request, 'registration/login.html', {'msg': msg})
 
 
 def login_view(request):
+    """
+    View to handle logging in template
+    :param request: wsgi request
+    :return: render login page
+    """
     print HttpResponse()
     return render(request, 'registration/login.html')
 
@@ -82,6 +96,12 @@ def quizzes_home(request):
 
 
 def choose_quiz(request):
+    """
+    Page to choose quiz from pull down
+    for use in quiz view
+    :param request: wsgi request
+    :return: render choose quiz page
+    """
     quizzes = Quiz.objects.all()
     quiz_names = []
     for quiz in quizzes:
@@ -107,25 +127,15 @@ def quiz_view(request):
 
 
 def question_view(request):
-    selected_quiz = request.GET.get('quizname', '')
-    question_num = request.GET.get('question_num', 0)
-    show_correct = request.GET.get('show_correct', 'false')
-    quiz = Quiz.objects.get(name=selected_quiz)
-    quizjson = json.loads(quiz.quizjson)
-    question = quizjson['questions'][int(question_num)]
-    choice_a = quizjson['answers'][int(question_num)]['choices'][0]
-    choice_b = quizjson['answers'][int(question_num)]['choices'][1]
-    choice_c = quizjson['answers'][int(question_num)]['choices'][2]
-    choice_d = quizjson['answers'][int(question_num)]['choices'][3]
-
-    return render(request, 'question_view.html', {'quizname': selected_quiz,
-                                                  'question_num': question_num,
-                                                  'show_correct': show_correct,
-                                                  'question': question,
-                                                  'choice_a': choice_a,
-                                                  'choice_b': choice_b,
-                                                  'choice_c': choice_c,
-                                                  'choice_d': choice_d})
+    """
+    Page to show question outside of controller.
+    This is what gets shown on a projector or screen
+    outside the teacher's controller view
+    :param request: wsgi request
+    :return: render question view page
+    """
+    quiz_dict = quiz_utils.question_builder(request)
+    return render(request, 'question_view.html', quiz_dict)
 
 
 # @login_required(login_url='/login/')
@@ -135,24 +145,9 @@ def load_quiz(request):
     :param request: wsgi request
     :return: rendered load quiz page
     """
-    id = request.GET.get('id')
-    quiz_names = []
-    quiz_ids = []
-    qt = []
-    quizzes = Quiz.objects.all()
-    for quiz in quizzes:
-        quiz_names.append(quiz.name)
-        quiz_ids.append(quiz.id)
-        qt.append(quiz)
-    if id is None:
-	quiz_obj = {}
-    else:
-        quiz_obj = json.loads(Quiz.objects.get(id=id).quizjson)
+    quizzes_dict = quiz_utils.quiz_loader(request)
 
-    return render(request, 'load_quiz.html', {'chosen_quiz': quiz_obj,
-                                              'quiz_ids': quiz_ids,
-                                              'quiz_names': quiz_names,
-                                              'qt': qt})
+    return render(request, 'load_quiz.html', quizzes_dict)
 
 
 # @login_required(login_url='/login/')
@@ -203,14 +198,7 @@ def pdf_view(request):
     :param request: wsgi request
     :return: rendered pdf view page, with pdf filenames
     """
-    pdfs = []
-    dir = '/home/pi/HoppoRoo/HoppoRoo/static/res/'
-    # dir = 'C:\\Users\\Jake\\git3\\HoppoRoo\\static\\res\\'
-    for pdf in os.listdir(dir):
-        if 'pdf' in pdf:
-            pdf = {'name': pdf,
-                   'dir': dir+pdf}
-            pdfs.append(pdf)
+    pdfs = quiz_utils.pdf_builder()
     return render(request, 'pdf_view.html', {'pdfs': pdfs})
 
 
@@ -221,14 +209,7 @@ def pdf_upload(request):
     :param request: wsgi request
     :return: rendered pdf upload page and pdf filenames
     """
-    pdfs = []
-    dir = '/home/pi/HoppoRoo/HoppoRoo/static/res/'
-    # dir = 'C:\\Users\\Jake\\git3\\HoppoRoo\\static\\res\\'
-    for pdf in os.listdir(dir):
-        if 'pdf' in pdf:
-            pdf = {'name': pdf,
-                   'dir': dir + pdf}
-            pdfs.append(pdf)
+    pdfs = quiz_utils.pdf_builder()
     return render(request, 'pdf_upload.html', {'pdfs': pdfs})
 
 
@@ -250,37 +231,35 @@ def results(request):
 
 # @login_required(login_url='/login/')
 def students_backup(request):
-    student_objs = Student.objects.all()
-    names = [student.name for student in student_objs]
-
-    results_arr = []
-
-    if 'name' not in request.GET:
-        student_name = names[0]
-    else:
-        student_name = request.GET['name']
-
-    student_obj = Student.objects.get(name=student_name)
-    results_objs = Results.objects.filter(student__name=student_obj.name)
-
-    for result in results_objs:
-        quiz_dict = {'quiz': result.quiz.name,
-                     'quiz_id': result.quiz.id,
-                     'score': result.score}
-        results_arr.append(quiz_dict)
-
-    return render(request, 'students.html', {'student_list': names,
-                                             'chosen_student': student_name,
-                                             'results': results_arr,
-                                             })
+    """
+    Deprecated Page showing students data and results
+    for quizzes.
+    :param request: wsgi request
+    :return: render students page
+    """
+    results_arr = student_utils.student_results(request)
+    return render(request, 'students.html', results_arr)
 
 
 def students(request):
+    """
+    Page to show students who are paired with
+    whatever device. Page allows teacher to add
+    new students for a new device
+    :param request: wsgi request
+    :return: render students page
+    """
     devices = Device.objects.all()
     return render(request, 'students1.html', {'devices': devices})
 
 
 def students_add(request):
+    """
+    Add page from students page which allows
+    adding a new device for a student
+    :param request: wsgi request
+    :return: render student add page
+    """
     return render(request, 'student_add.html')
 
 
@@ -294,15 +273,8 @@ def upload_file(request):
     :param request: wsgi request
     :return: response for upload
     """
-    if request.method != 'POST':
-        return HttpResponseBadRequest('Only POST requests are allowed')
-    file = request.FILES['myfile']
-    dir = '/home/pi/HoppoRoo/HoppoRoo/static/res/'
-    # dir = 'C:\\Users\\Jake\\git3\\HoppoRoo\\static\\res\\'
-    with open(dir+'%s' % file.name, 'wb+') as dest:
-        for chunk in file.chunks():
-            dest.write(chunk)
-    return HttpResponse("file uploaded")
+    # TODO: FIX JQUERY.UPLOAD.MIN.JS TO HANDLE OFFLINE HANDLE OF JQUERY.FORM.JS --> SEE JQUERY.UPLOAD.MIN.JS
+    return utils.upload(request)
 
 
 def delete_file(request):
@@ -311,51 +283,22 @@ def delete_file(request):
     :param request: wsgi request
     :return: response for delete
     """
-    filename = request.GET.get('filename')
-    redirect = request.GET.get('redirect')
-    try:
-        os.remove(filename)
-        return HttpResponseRedirect("/"+redirect)
-    except IOError as e:
-        return HttpResponseBadRequest('PDF DELETE ERROR:{0}'.format(e.strerror))
+    return utils.delete(request)
 
 
 def serve_quiz(request):
-    quizzes = Quiz.objects.all()
-    quiz_json = []
-    for quiz in quizzes:
-        quiz_json.append(quiz.quizjson)
-    return HttpResponse(json.dumps(quiz_json))
+    """
+    Deprecated method which serves
+    quiz data through api call
+    :param request: wsgi request
+    :return: HTTP response with json
+    """
+    return quiz_utils.build_quiz_api()
 
 
 @csrf_exempt
 def result_post_point(request):
-    quizname = request.GET.get('quizname')
-    devices = Device.objects.all()
-    quiz_obj = Quiz.objects.get(name=quizname)
-
-    quizjson = json.loads(quiz_obj.quizjson)
-    overall_dict = results_process_questions(quizjson)
-
-    post_dict = request.POST
-    results_dict = results_process_data(post_dict, overall_dict, devices)
-
-    for device in devices:
-        score = 0
-        for result in results_dict:
-            if device.student.name in result['student']:
-                score += int(result['score'])
-        try:
-            #obj, create = Results.objects.update_or_create(quiz=quiz_obj, student=device.student, score=score)
-	    result = Results()
-            result.quiz = quiz_obj
-            result.student = device.student
-            result.score = score
-            result.save()
-        except Exception:
-            return HttpResponse("failure")
-
-    return HttpResponse("success")
+    return results_utils.result_post_method(request)
 
 
 def data_access_point(request):
@@ -366,40 +309,8 @@ def data_access_point(request):
     :return: response object with json data
     """
     ip_arr = set_ip_adds.parse_nmap()
-    response_data = {}
-    a = 0
-    b = 0
-    c = 0
-    d = 0
-    nodes = {}
-    for ip in ip_arr:
-	print ip
-        try:
-            response_data = json.loads(requests.get("http://{0}:8080".format(ip)).text)
-            a += int(response_data['buttonA'])
-            b += int(response_data['buttonB'])
-            c += int(response_data['buttonC'])
-            d += int(response_data['buttonD'])
-
-            nodes[response_data['id']] = response_data
-        except requests.RequestException:
-            return HttpResponse(json.dumps({}))
-    # output_json = {'A': 1,
-    #                'B': 2,
-    #                'C': 4,
-    #                'D': 3,
-    #                'node_data': 'testse'}
-    output_json = {'A': a,
-                   'B': b,
-                   'C': c,
-                   'D': d,
-                   'node_data': nodes}
-
-    # return HttpResponse(json.dumps({"A": 0, "node_data": {"55555": {"buttonC": "0", "buttonB": "1", "buttonA": "0", "buttonD": "0"},
-    #                                                       "12345": {"buttonC": "0", "buttonB": "0", "buttonA": "1", "buttonD": "0"},
-    #                                                       "11111": {"buttonC": "0", "buttonB": "0", "buttonA": "0", "buttonD": "1"}},
-    #                                 "C": 0, "B": 1, "D": 0}))
-    return HttpResponse(json.dumps(output_json))
+    response_data = utils.data_api_method(ip_arr)
+    return HttpResponse(response_data)
 
 
 def create_quiz_ap(request):
@@ -408,54 +319,16 @@ def create_quiz_ap(request):
     :param request: request from current page
     :return: redirect back to page while
     """
-
-    post_dict = request.POST
-    get_dict = request.GET
-
-    question_count = 0
-    quiz_model = None
-    questions = []
-    question_elements = []
-
-    for key, value in post_dict.iteritems():
-        if 'question' in key:
-            question_count += 1
-
-    if get_dict['pdf'] == 'true':
-        for i in range(question_count):
-            index = str(i)
-            quiz_model = PDFQuiz()
-            questions.append(post_dict['question' + index])
-            temp_dict = {'question_num': index,
-                         'correct': post_dict['question'+index]}
-            question_elements.append(temp_dict)
-    else:
-        for i in range(question_count):
-            index = str(i)
-            quiz_model = Quiz()
-            questions.append(post_dict['question'+index])
-            temp_dict = {'correct': post_dict['correct'+index],
-                         'choices': [post_dict['choice1'+index],
-                                     post_dict['choice2' + index],
-                                     post_dict['choice3' + index],
-                                     post_dict['choice4' + index]]}
-            question_elements.append(temp_dict)
-
-    date = datetime.datetime.now()
-    question_json = {'answers': question_elements,
-                     'questions': questions,
-                     'date_created': date.strftime("%Y-%m-%d"),
-                     'name': post_dict['quizname']}
-
-    quiz_model.quizjson = json.dumps(question_json)
-    quiz_model.subject = post_dict['quizsubject']
-    quiz_model.name = post_dict['quizname']
-    quiz_model.save()
-
-    return HttpResponseRedirect('/quizzes/create_quiz')
+    return quiz_utils.create_quiz_method(request)
 
 
 def quiz_data(request):
+    """
+    Simple API method to return data
+    from each quiz as one json obj
+    :param request: wsgi request
+    :return: HTTP resonse with json
+    """
     name = request.GET.get('quizname')
     quizzes = Quiz.objects.all()
     quiz_arr = []
@@ -467,6 +340,13 @@ def quiz_data(request):
 
 
 def add_student_device(request):
+    """
+    API method to handle incoming form POST
+    for adding a new student to the database
+    with a certain Device foreign key
+    :param request: wsgi request
+    :return: redirect or error message
+    """
     post_dict = request.POST
     try:
         student = Student()
@@ -486,43 +366,13 @@ def add_student_device(request):
 
 
 def export_xlsx(request):
-    results = Results.objects.all()
-    students = Student.objects.all()
-    quizzes = Quiz.objects.all()
-    devices = Device.objects.all().order_by('student__name')
-    try:
-        workbook = xlsxwriter.Workbook("Results.xlsx")
-        worksheet = workbook.add_worksheet()
+    """
+    API method to handle exporting
+    xlsx from results page
+    :param request: wsgi request
+    :return: render method for response
+    """
+    return results_utils.xlsx_handler(request)
 
-        bold = workbook.add_format({'bold': True})
-        worksheet.write('B1', 'Student', bold)
-        worksheet.write('C1', 'Student_ID', bold)
-        worksheet.write('D1', 'Device_ID', bold)
-        for quiz in quizzes:
-            worksheet.write(0, quiz.id+3, quiz.name, bold)
-
-        for index in range(len(devices)):
-            worksheet.write(index + 1, 1, devices[index].student.name)
-            worksheet.write(index + 1, 2, devices[index].student.id)
-            worksheet.write(index + 1, 3, devices[index].id)
-            for result in results:
-                for quiz in quizzes:
-                    if devices[index].student.name == result.student.name and result.quiz.name == quiz.name:
-                        worksheet.write(index + 1, quiz.id+3, result.score)
-
-        workbook.close()
-
-        raw_text = open("/home/pi/HoppoRoo/HoppoRoo/Results.xlsx", 'rb').read()
-
-        response = HttpResponse(raw_text, content_type='text/plain')
-        response['Content-Disposition'] = 'attachment; filename={0}'.format(
-            "Results" + str(datetime.datetime.now().date()) + ".xlsx")
-
-        return response
-    except Exception:
-        error_message = '''Failure to write to worksheet/spreadsheet. Please ensure that the spreadsheet
-                        for today has been closed.'''
-        return render(request, 'generic_error.html', {"error_message": error_message,
-                                                      "return": '/results'})
 
 
